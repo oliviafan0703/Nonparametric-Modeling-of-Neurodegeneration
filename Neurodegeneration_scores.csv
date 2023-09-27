@@ -1,0 +1,563 @@
+Replicate,Treatment_all,Generation,Treatment,Rechallenge_dose_uM,Rechallenge_Treatment,NeuronScore
+1,F1 003uM 25uM,F1,0.03,25,Rechallenged,6
+1,F1 003uM 25uM,F1,0.03,25,Rechallenged,0
+1,F1 003uM 25uM,F1,0.03,25,Rechallenged,0
+1,F1 003uM 25uM,F1,0.03,25,Rechallenged,0
+1,F1 003uM 25uM,F1,0.03,25,Rechallenged,6
+1,F1 003uM 25uM,F1,0.03,25,Rechallenged,3
+1,F1 003uM 25uM,F1,0.03,25,Rechallenged,1
+1,F1 003uM 25uM,F1,0.03,25,Rechallenged,1
+1,F1 003uM 25uM,F1,0.03,25,Rechallenged,1
+1,F1 003uM 25uM,F1,0.03,25,Rechallenged,0
+1,F1 003uM 25uM,F1,0.03,25,Rechallenged,2
+1,F1 003uM 25uM,F1,0.03,25,Rechallenged,0
+1,F1 003uM 25uM,F1,0.03,25,Rechallenged,0
+1,F1 003uM 25uM,F1,0.03,25,Rechallenged,0
+1,F1 003uM 25uM,F1,0.03,25,Rechallenged,6
+1,F1 003uM 25uM,F1,0.03,25,Rechallenged,1
+1,F1 003uM 25uM,F1,0.03,25,Rechallenged,0
+1,F1 003uM 25uM,F1,0.03,25,Rechallenged,0
+1,F1 003uM 25uM,F1,0.03,25,Rechallenged,4
+1,F1 003uM control,F1,0.03,0,Not rechallenged,0
+1,F1 003uM control,F1,0.03,0,Not rechallenged,0
+1,F1 003uM control,F1,0.03,0,Not rechallenged,0
+1,F1 003uM control,F1,0.03,0,Not rechallenged,0
+1,F1 003uM control,F1,0.03,0,Not rechallenged,0
+1,F1 003uM control,F1,0.03,0,Not rechallenged,0
+1,F1 003uM control,F1,0.03,0,Not rechallenged,0
+1,F1 003uM control,F1,0.03,0,Not rechallenged,1
+1,F1 003uM control,F1,0.03,0,Not rechallenged,0
+1,F1 003uM control,F1,0.03,0,Not rechallenged,0
+1,F1 003uM control,F1,0.03,0,Not rechallenged,0
+1,F1 003uM control,F1,0.03,0,Not rechallenged,0
+1,F1 003uM control,F1,0.03,0,Not rechallenged,1
+1,F1 003uM control,F1,0.03,0,Not rechallenged,0
+1,F1 003uM control,F1,0.03,0,Not rechallenged,0
+1,F1 003uM control,F1,0.03,0,Not rechallenged,0
+1,F1 003uM control,F1,0.03,0,Not rechallenged,0
+1,F1 003uM control,F1,0.03,0,Not rechallenged,0
+1,F1 003uM control,F1,0.03,0,Not rechallenged,1
+1,F1 003uM control,F1,0.03,0,Not rechallenged,0
+1,F1 003uM control,F1,0.03,0,Not rechallenged,0
+1,F1 050uM 25uM,F1,0.5,25,Rechallenged,0
+1,F1 050uM 25uM,F1,0.5,25,Rechallenged,0
+1,F1 050uM 25uM,F1,0.5,25,Rechallenged,1
+1,F1 050uM 25uM,F1,0.5,25,Rechallenged,5
+1,F1 050uM 25uM,F1,0.5,25,Rechallenged,6
+1,F1 050uM 25uM,F1,0.5,25,Rechallenged,6
+1,F1 050uM 25uM,F1,0.5,25,Rechallenged,6
+1,F1 050uM 25uM,F1,0.5,25,Rechallenged,6
+1,F1 050uM 25uM,F1,0.5,25,Rechallenged,0
+1,F1 050uM 25uM,F1,0.5,25,Rechallenged,1
+1,F1 050uM 25uM,F1,0.5,25,Rechallenged,1
+1,F1 050uM 25uM,F1,0.5,25,Rechallenged,5
+1,F1 050uM 25uM,F1,0.5,25,Rechallenged,5
+1,F1 050uM 25uM,F1,0.5,25,Rechallenged,0
+1,F1 050uM control,F1,0.5,0,Not rechallenged,1
+1,F1 050uM control,F1,0.5,0,Not rechallenged,0
+1,F1 050uM control,F1,0.5,0,Not rechallenged,0
+1,F1 050uM control,F1,0.5,0,Not rechallenged,0
+1,F1 050uM control,F1,0.5,0,Not rechallenged,0
+1,F1 050uM control,F1,0.5,0,Not rechallenged,0
+1,F1 050uM control,F1,0.5,0,Not rechallenged,0
+1,F1 050uM control,F1,0.5,0,Not rechallenged,0
+1,F1 050uM control,F1,0.5,0,Not rechallenged,0
+1,F1 050uM control,F1,0.5,0,Not rechallenged,0
+1,F1 050uM control,F1,0.5,0,Not rechallenged,5
+1,F1 050uM control,F1,0.5,0,Not rechallenged,0
+1,F1 050uM control,F1,0.5,0,Not rechallenged,0
+1,F1 050uM control,F1,0.5,0,Not rechallenged,0
+1,F1 050uM control,F1,0.5,0,Not rechallenged,0
+1,F1 050uM control,F1,0.5,0,Not rechallenged,1
+1,F1 050uM control,F1,0.5,0,Not rechallenged,0
+1,F1 050uM control,F1,0.5,0,Not rechallenged,0
+1,F1 050uM control,F1,0.5,0,Not rechallenged,0
+1,F1 050uM control,F1,0.5,0,Not rechallenged,0
+1,F1 control 25uM,F1,0,25,Rechallenged,6
+1,F1 control 25uM,F1,0,25,Rechallenged,0
+1,F1 control 25uM,F1,0,25,Rechallenged,0
+1,F1 control 25uM,F1,0,25,Rechallenged,5
+1,F1 control 25uM,F1,0,25,Rechallenged,0
+1,F1 control 25uM,F1,0,25,Rechallenged,0
+1,F1 control 25uM,F1,0,25,Rechallenged,0
+1,F1 control 25uM,F1,0,25,Rechallenged,2
+1,F1 control 25uM,F1,0,25,Rechallenged,0
+1,F1 control 25uM,F1,0,25,Rechallenged,0
+1,F1 control 25uM,F1,0,25,Rechallenged,0
+1,F1 control 25uM,F1,0,25,Rechallenged,0
+1,F1 control control,F1,0,0,Not rechallenged,0
+1,F1 control control,F1,0,0,Not rechallenged,1
+1,F1 control control,F1,0,0,Not rechallenged,0
+1,F1 control control,F1,0,0,Not rechallenged,0
+1,F1 control control,F1,0,0,Not rechallenged,0
+1,F1 control control,F1,0,0,Not rechallenged,0
+1,F1 control control,F1,0,0,Not rechallenged,0
+1,F1 control control,F1,0,0,Not rechallenged,3
+1,F1 control control,F1,0,0,Not rechallenged,0
+1,F1 control control,F1,0,0,Not rechallenged,2
+1,F1 control control,F1,0,0,Not rechallenged,0
+1,F1 control control,F1,0,0,Not rechallenged,3
+1,F1 control control,F1,0,0,Not rechallenged,0
+1,F1 control control,F1,0,0,Not rechallenged,0
+1,F1 control control,F1,0,0,Not rechallenged,0
+1,F1 control control,F1,0,0,Not rechallenged,0
+1,P0 003uM 25uM,P0,0.03,25,Rechallenged,4
+1,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+1,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+1,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+1,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+1,P0 003uM 25uM,P0,0.03,25,Rechallenged,6
+1,P0 003uM 25uM,P0,0.03,25,Rechallenged,5
+1,P0 003uM 25uM,P0,0.03,25,Rechallenged,5
+1,P0 003uM 25uM,P0,0.03,25,Rechallenged,4
+1,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+1,P0 003uM 25uM,P0,0.03,25,Rechallenged,3
+1,P0 003uM 25uM,P0,0.03,25,Rechallenged,5
+1,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+1,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+1,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+1,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+1,P0 003uM control,P0,0.03,0,Not rechallenged,0
+1,P0 003uM control,P0,0.03,0,Not rechallenged,4
+1,P0 003uM control,P0,0.03,0,Not rechallenged,0
+1,P0 003uM control,P0,0.03,0,Not rechallenged,3
+1,P0 003uM control,P0,0.03,0,Not rechallenged,0
+1,P0 003uM control,P0,0.03,0,Not rechallenged,0
+1,P0 003uM control,P0,0.03,0,Not rechallenged,0
+1,P0 003uM control,P0,0.03,0,Not rechallenged,0
+1,P0 003uM control,P0,0.03,0,Not rechallenged,3
+1,P0 003uM control,P0,0.03,0,Not rechallenged,4
+1,P0 003uM control,P0,0.03,0,Not rechallenged,0
+1,P0 003uM control,P0,0.03,0,Not rechallenged,0
+1,P0 003uM control,P0,0.03,0,Not rechallenged,2
+1,P0 003uM control,P0,0.03,0,Not rechallenged,3
+1,P0 003uM control,P0,0.03,0,Not rechallenged,0
+1,P0 003uM control,P0,0.03,0,Not rechallenged,4
+1,P0 003uM control,P0,0.03,0,Not rechallenged,0
+1,P0 003uM control,P0,0.03,0,Not rechallenged,0
+1,P0 003uM control,P0,0.03,0,Not rechallenged,3
+1,P0 003uM control,P0,0.03,0,Not rechallenged,0
+1,P0 003uM control,P0,0.03,0,Not rechallenged,0
+1,P0 050uM 25uM,P0,0.5,25,Rechallenged,1
+1,P0 050uM 25uM,P0,0.5,25,Rechallenged,0
+1,P0 050uM 25uM,P0,0.5,25,Rechallenged,6
+1,P0 050uM 25uM,P0,0.5,25,Rechallenged,6
+1,P0 050uM 25uM,P0,0.5,25,Rechallenged,1
+1,P0 050uM control,P0,0.5,0,Not rechallenged,0
+1,P0 050uM control,P0,0.5,0,Not rechallenged,0
+1,P0 050uM control,P0,0.5,0,Not rechallenged,2
+1,P0 050uM control,P0,0.5,0,Not rechallenged,4
+1,P0 050uM control,P0,0.5,0,Not rechallenged,1
+1,P0 050uM control,P0,0.5,0,Not rechallenged,0
+1,P0 050uM control,P0,0.5,0,Not rechallenged,4
+1,P0 050uM control,P0,0.5,0,Not rechallenged,0
+1,P0 050uM control,P0,0.5,0,Not rechallenged,1
+1,P0 050uM control,P0,0.5,0,Not rechallenged,2
+1,P0 control control,P0,0,0,Not rechallenged,5
+1,P0 control control,P0,0,0,Not rechallenged,1
+1,P0 control control,P0,0,0,Not rechallenged,4
+1,P0 control control,P0,0,0,Not rechallenged,0
+1,P0 control control,P0,0,0,Not rechallenged,3
+1,P0 control control,P0,0,0,Not rechallenged,0
+1,P0 control control,P0,0,0,Not rechallenged,0
+1,P0 control control,P0,0,0,Not rechallenged,0
+1,P0 control control,P0,0,0,Not rechallenged,0
+1,P0 control control,P0,0,0,Not rechallenged,0
+1,P0 control control,P0,0,0,Not rechallenged,0
+1,P0 control control,P0,0,0,Not rechallenged,2
+1,P0 control control,P0,0,0,Not rechallenged,0
+1,P0 control control,P0,0,0,Not rechallenged,2
+1,P0 control control,P0,0,0,Not rechallenged,0
+1,P0 control control,P0,0,0,Not rechallenged,3
+1,P0 control control,P0,0,0,Not rechallenged,3
+2,F1 003uM control,F1,0.03,0,Not rechallenged,0
+2,F1 003uM control,F1,0.03,0,Not rechallenged,0
+2,F1 003uM control,F1,0.03,0,Not rechallenged,0
+2,F1 003uM control,F1,0.03,0,Not rechallenged,4
+2,F1 003uM control,F1,0.03,0,Not rechallenged,4
+2,F1 003uM control,F1,0.03,0,Not rechallenged,0
+2,F1 003uM control,F1,0.03,0,Not rechallenged,0
+2,F1 003uM control,F1,0.03,0,Not rechallenged,3
+2,F1 003uM control,F1,0.03,0,Not rechallenged,0
+2,F1 003uM control,F1,0.03,0,Not rechallenged,0
+2,F1 050uM 25uM,F1,0.5,25,Rechallenged,0
+2,F1 050uM 25uM,F1,0.5,25,Rechallenged,1
+2,F1 050uM 25uM,F1,0.5,25,Rechallenged,1
+2,F1 050uM 25uM,F1,0.5,25,Rechallenged,1
+2,F1 050uM 25uM,F1,0.5,25,Rechallenged,0
+2,F1 050uM 25uM,F1,0.5,25,Rechallenged,1
+2,F1 050uM 25uM,F1,0.5,25,Rechallenged,2
+2,F1 050uM 25uM,F1,0.5,25,Rechallenged,2
+2,F1 050uM 25uM,F1,0.5,25,Rechallenged,2
+2,F1 050uM 25uM,F1,0.5,25,Rechallenged,2
+2,F1 050uM 25uM,F1,0.5,25,Rechallenged,0
+2,F1 050uM 25uM,F1,0.5,25,Rechallenged,0
+2,F1 050uM 25uM,F1,0.5,25,Rechallenged,4
+2,F1 050uM 25uM,F1,0.5,25,Rechallenged,1
+2,F1 050uM 25uM,F1,0.5,25,Rechallenged,0
+2,F1 050uM 25uM,F1,0.5,25,Rechallenged,1
+2,F1 050uM 25uM,F1,0.5,25,Rechallenged,0
+2,F1 050uM 25uM,F1,0.5,25,Rechallenged,0
+2,F1 050uM 25uM,F1,0.5,25,Rechallenged,1
+2,F1 050uM 25uM,F1,0.5,25,Rechallenged,2
+2,F1 050uM control,F1,0.5,0,Not rechallenged,0
+2,F1 050uM control,F1,0.5,0,Not rechallenged,3
+2,F1 050uM control,F1,0.5,0,Not rechallenged,1
+2,F1 050uM control,F1,0.5,0,Not rechallenged,2
+2,F1 050uM control,F1,0.5,0,Not rechallenged,0
+2,F1 050uM control,F1,0.5,0,Not rechallenged,0
+2,F1 050uM control,F1,0.5,0,Not rechallenged,0
+2,F1 050uM control,F1,0.5,0,Not rechallenged,2
+2,F1 050uM control,F1,0.5,0,Not rechallenged,0
+2,F1 050uM control,F1,0.5,0,Not rechallenged,0
+2,F1 050uM control,F1,0.5,0,Not rechallenged,0
+2,F1 050uM control,F1,0.5,0,Not rechallenged,0
+2,F1 050uM control,F1,0.5,0,Not rechallenged,2
+2,F1 050uM control,F1,0.5,0,Not rechallenged,0
+2,F1 050uM control,F1,0.5,0,Not rechallenged,2
+2,F1 050uM control,F1,0.5,0,Not rechallenged,1
+2,F1 050uM control,F1,0.5,0,Not rechallenged,1
+2,F1 050uM control,F1,0.5,0,Not rechallenged,0
+2,F1 control 25uM,F1,0,25,Rechallenged,2
+2,F1 control 25uM,F1,0,25,Rechallenged,1
+2,F1 control 25uM,F1,0,25,Rechallenged,0
+2,F1 control 25uM,F1,0,25,Rechallenged,1
+2,F1 control 25uM,F1,0,25,Rechallenged,1
+2,F1 control 25uM,F1,0,25,Rechallenged,0
+2,F1 control 25uM,F1,0,25,Rechallenged,1
+2,F1 control 25uM,F1,0,25,Rechallenged,0
+2,F1 control 25uM,F1,0,25,Rechallenged,0
+2,F1 control 25uM,F1,0,25,Rechallenged,0
+2,F1 control 25uM,F1,0,25,Rechallenged,1
+2,F1 control 25uM,F1,0,25,Rechallenged,0
+2,F1 control 25uM,F1,0,25,Rechallenged,5
+2,F1 control 25uM,F1,0,25,Rechallenged,2
+2,F1 control control,F1,0,0,Not rechallenged,0
+2,F1 control control,F1,0,0,Not rechallenged,3
+2,F1 control control,F1,0,0,Not rechallenged,0
+2,F1 control control,F1,0,0,Not rechallenged,0
+2,F1 control control,F1,0,0,Not rechallenged,0
+2,F1 control control,F1,0,0,Not rechallenged,0
+2,F1 control control,F1,0,0,Not rechallenged,0
+2,F1 control control,F1,0,0,Not rechallenged,3
+2,F1 control control,F1,0,0,Not rechallenged,0
+2,F1 control control,F1,0,0,Not rechallenged,2
+2,F1 control control,F1,0,0,Not rechallenged,0
+2,F1 control control,F1,0,0,Not rechallenged,0
+2,F1 control control,F1,0,0,Not rechallenged,0
+2,F1 control control,F1,0,0,Not rechallenged,0
+2,F1 control control,F1,0,0,Not rechallenged,0
+2,F1 control control,F1,0,0,Not rechallenged,0
+2,F1 control control,F1,0,0,Not rechallenged,0
+2,F1 control control,F1,0,0,Not rechallenged,0
+2,F1 control control,F1,0,0,Not rechallenged,0
+2,F1 control control,F1,0,0,Not rechallenged,1
+2,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+2,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+2,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+2,P0 003uM 25uM,P0,0.03,25,Rechallenged,1
+2,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+2,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+2,P0 003uM 25uM,P0,0.03,25,Rechallenged,1
+2,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+2,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+2,P0 003uM 25uM,P0,0.03,25,Rechallenged,2
+2,P0 003uM 25uM,P0,0.03,25,Rechallenged,2
+2,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+2,P0 003uM 25uM,P0,0.03,25,Rechallenged,1
+2,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+2,P0 003uM 25uM,P0,0.03,25,Rechallenged,1
+2,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+2,P0 003uM 25uM,P0,0.03,25,Rechallenged,1
+2,P0 003uM 25uM,P0,0.03,25,Rechallenged,1
+2,P0 003uM 25uM,P0,0.03,25,Rechallenged,2
+2,P0 003uM 25uM,P0,0.03,25,Rechallenged,2
+2,P0 003uM control,P0,0.03,0,Not rechallenged,3
+2,P0 003uM control,P0,0.03,0,Not rechallenged,0
+2,P0 003uM control,P0,0.03,0,Not rechallenged,0
+2,P0 003uM control,P0,0.03,0,Not rechallenged,1
+2,P0 003uM control,P0,0.03,0,Not rechallenged,0
+2,P0 003uM control,P0,0.03,0,Not rechallenged,2
+2,P0 003uM control,P0,0.03,0,Not rechallenged,0
+2,P0 003uM control,P0,0.03,0,Not rechallenged,0
+2,P0 003uM control,P0,0.03,0,Not rechallenged,0
+2,P0 003uM control,P0,0.03,0,Not rechallenged,0
+2,P0 003uM control,P0,0.03,0,Not rechallenged,0
+2,P0 003uM control,P0,0.03,0,Not rechallenged,0
+2,P0 003uM control,P0,0.03,0,Not rechallenged,0
+2,P0 003uM control,P0,0.03,0,Not rechallenged,0
+2,P0 003uM control,P0,0.03,0,Not rechallenged,0
+2,P0 003uM control,P0,0.03,0,Not rechallenged,3
+2,P0 003uM control,P0,0.03,0,Not rechallenged,0
+2,P0 003uM control,P0,0.03,0,Not rechallenged,0
+2,P0 003uM control,P0,0.03,0,Not rechallenged,0
+2,P0 003uM control,P0,0.03,0,Not rechallenged,0
+2,P0 050uM 25uM,P0,0.5,25,Rechallenged,6
+2,P0 050uM 25uM,P0,0.5,25,Rechallenged,1
+2,P0 050uM 25uM,P0,0.5,25,Rechallenged,1
+2,P0 050uM 25uM,P0,0.5,25,Rechallenged,0
+2,P0 050uM 25uM,P0,0.5,25,Rechallenged,2
+2,P0 050uM 25uM,P0,0.5,25,Rechallenged,2
+2,P0 050uM 25uM,P0,0.5,25,Rechallenged,4
+2,P0 050uM 25uM,P0,0.5,25,Rechallenged,2
+2,P0 050uM 25uM,P0,0.5,25,Rechallenged,4
+2,P0 050uM 25uM,P0,0.5,25,Rechallenged,0
+2,P0 050uM 25uM,P0,0.5,25,Rechallenged,1
+2,P0 050uM 25uM,P0,0.5,25,Rechallenged,1
+2,P0 050uM 25uM,P0,0.5,25,Rechallenged,2
+2,P0 050uM 25uM,P0,0.5,25,Rechallenged,4
+2,P0 050uM control,P0,0.5,0,Not rechallenged,1
+2,P0 050uM control,P0,0.5,0,Not rechallenged,2
+2,P0 050uM control,P0,0.5,0,Not rechallenged,0
+2,P0 050uM control,P0,0.5,0,Not rechallenged,2
+2,P0 050uM control,P0,0.5,0,Not rechallenged,0
+2,P0 050uM control,P0,0.5,0,Not rechallenged,0
+2,P0 050uM control,P0,0.5,0,Not rechallenged,1
+2,P0 050uM control,P0,0.5,0,Not rechallenged,1
+2,P0 050uM control,P0,0.5,0,Not rechallenged,0
+2,P0 050uM control,P0,0.5,0,Not rechallenged,0
+2,P0 050uM control,P0,0.5,0,Not rechallenged,0
+2,P0 050uM control,P0,0.5,0,Not rechallenged,0
+2,P0 050uM control,P0,0.5,0,Not rechallenged,0
+2,P0 050uM control,P0,0.5,0,Not rechallenged,1
+2,P0 050uM control,P0,0.5,0,Not rechallenged,0
+2,P0 050uM control,P0,0.5,0,Not rechallenged,1
+2,P0 050uM control,P0,0.5,0,Not rechallenged,0
+2,P0 050uM control,P0,0.5,0,Not rechallenged,0
+2,P0 050uM control,P0,0.5,0,Not rechallenged,0
+2,P0 control 25uM,P0,0,25,Rechallenged,0
+2,P0 control 25uM,P0,0,25,Rechallenged,0
+2,P0 control 25uM,P0,0,25,Rechallenged,0
+2,P0 control 25uM,P0,0,25,Rechallenged,0
+2,P0 control 25uM,P0,0,25,Rechallenged,0
+2,P0 control 25uM,P0,0,25,Rechallenged,1
+2,P0 control 25uM,P0,0,25,Rechallenged,0
+2,P0 control 25uM,P0,0,25,Rechallenged,1
+2,P0 control 25uM,P0,0,25,Rechallenged,1
+2,P0 control 25uM,P0,0,25,Rechallenged,0
+2,P0 control 25uM,P0,0,25,Rechallenged,0
+2,P0 control 25uM,P0,0,25,Rechallenged,1
+2,P0 control 25uM,P0,0,25,Rechallenged,0
+2,P0 control 25uM,P0,0,25,Rechallenged,1
+2,P0 control 25uM,P0,0,25,Rechallenged,2
+2,P0 control 25uM,P0,0,25,Rechallenged,1
+2,P0 control 25uM,P0,0,25,Rechallenged,2
+2,P0 control 25uM,P0,0,25,Rechallenged,1
+2,P0 control 25uM,P0,0,25,Rechallenged,0
+2,P0 control 25uM,P0,0,25,Rechallenged,1
+2,P0 control 25uM,P0,0,25,Rechallenged,1
+2,P0 control control,P0,0,0,Not rechallenged,1
+2,P0 control control,P0,0,0,Not rechallenged,0
+2,P0 control control,P0,0,0,Not rechallenged,0
+2,P0 control control,P0,0,0,Not rechallenged,1
+2,P0 control control,P0,0,0,Not rechallenged,0
+2,P0 control control,P0,0,0,Not rechallenged,0
+2,P0 control control,P0,0,0,Not rechallenged,0
+2,P0 control control,P0,0,0,Not rechallenged,0
+2,P0 control control,P0,0,0,Not rechallenged,0
+2,P0 control control,P0,0,0,Not rechallenged,1
+2,P0 control control,P0,0,0,Not rechallenged,0
+2,P0 control control,P0,0,0,Not rechallenged,0
+2,P0 control control,P0,0,0,Not rechallenged,0
+2,P0 control control,P0,0,0,Not rechallenged,1
+2,P0 control control,P0,0,0,Not rechallenged,0
+2,P0 control control,P0,0,0,Not rechallenged,1
+2,P0 control control,P0,0,0,Not rechallenged,0
+2,P0 control control,P0,0,0,Not rechallenged,0
+2,P0 control control,P0,0,0,Not rechallenged,0
+3,F1 003uM 25uM,F1,0.03,25,Rechallenged,0
+3,F1 003uM 25uM,F1,0.03,25,Rechallenged,0
+3,F1 003uM 25uM,F1,0.03,25,Rechallenged,1
+3,F1 003uM 25uM,F1,0.03,25,Rechallenged,0
+3,F1 003uM 25uM,F1,0.03,25,Rechallenged,1
+3,F1 003uM 25uM,F1,0.03,25,Rechallenged,5
+3,F1 003uM 25uM,F1,0.03,25,Rechallenged,0
+3,F1 003uM 25uM,F1,0.03,25,Rechallenged,1
+3,F1 003uM 25uM,F1,0.03,25,Rechallenged,1
+3,F1 003uM 25uM,F1,0.03,25,Rechallenged,5
+3,F1 003uM 25uM,F1,0.03,25,Rechallenged,0
+3,F1 003uM 25uM,F1,0.03,25,Rechallenged,1
+3,F1 003uM 25uM,F1,0.03,25,Rechallenged,0
+3,F1 003uM control,F1,0.03,0,Not rechallenged,1
+3,F1 003uM control,F1,0.03,0,Not rechallenged,0
+3,F1 003uM control,F1,0.03,0,Not rechallenged,0
+3,F1 003uM control,F1,0.03,0,Not rechallenged,0
+3,F1 003uM control,F1,0.03,0,Not rechallenged,0
+3,F1 003uM control,F1,0.03,0,Not rechallenged,0
+3,F1 003uM control,F1,0.03,0,Not rechallenged,1
+3,F1 003uM control,F1,0.03,0,Not rechallenged,1
+3,F1 003uM control,F1,0.03,0,Not rechallenged,0
+3,F1 003uM control,F1,0.03,0,Not rechallenged,0
+3,F1 003uM control,F1,0.03,0,Not rechallenged,0
+3,F1 003uM control,F1,0.03,0,Not rechallenged,3
+3,F1 003uM control,F1,0.03,0,Not rechallenged,0
+3,F1 003uM control,F1,0.03,0,Not rechallenged,1
+3,F1 003uM control,F1,0.03,0,Not rechallenged,0
+3,F1 003uM control,F1,0.03,0,Not rechallenged,0
+3,F1 003uM control,F1,0.03,0,Not rechallenged,1
+3,F1 003uM control,F1,0.03,0,Not rechallenged,0
+3,F1 050uM 25uM,F1,0.5,25,Rechallenged,6
+3,F1 050uM 25uM,F1,0.5,25,Rechallenged,6
+3,F1 050uM 25uM,F1,0.5,25,Rechallenged,6
+3,F1 050uM 25uM,F1,0.5,25,Rechallenged,6
+3,F1 050uM 25uM,F1,0.5,25,Rechallenged,6
+3,F1 050uM 25uM,F1,0.5,25,Rechallenged,0
+3,F1 050uM 25uM,F1,0.5,25,Rechallenged,0
+3,F1 050uM 25uM,F1,0.5,25,Rechallenged,0
+3,F1 050uM 25uM,F1,0.5,25,Rechallenged,0
+3,F1 050uM 25uM,F1,0.5,25,Rechallenged,0
+3,F1 050uM 25uM,F1,0.5,25,Rechallenged,0
+3,F1 050uM 25uM,F1,0.5,25,Rechallenged,1
+3,F1 050uM 25uM,F1,0.5,25,Rechallenged,2
+3,F1 050uM 25uM,F1,0.5,25,Rechallenged,2
+3,F1 050uM 25uM,F1,0.5,25,Rechallenged,1
+3,F1 050uM 25uM,F1,0.5,25,Rechallenged,0
+3,F1 050uM 25uM,F1,0.5,25,Rechallenged,1
+3,F1 050uM control,F1,0.5,0,Not rechallenged,0
+3,F1 050uM control,F1,0.5,0,Not rechallenged,0
+3,F1 050uM control,F1,0.5,0,Not rechallenged,0
+3,F1 050uM control,F1,0.5,0,Not rechallenged,0
+3,F1 050uM control,F1,0.5,0,Not rechallenged,0
+3,F1 050uM control,F1,0.5,0,Not rechallenged,0
+3,F1 050uM control,F1,0.5,0,Not rechallenged,0
+3,F1 050uM control,F1,0.5,0,Not rechallenged,1
+3,F1 050uM control,F1,0.5,0,Not rechallenged,0
+3,F1 050uM control,F1,0.5,0,Not rechallenged,0
+3,F1 050uM control,F1,0.5,0,Not rechallenged,0
+3,F1 050uM control,F1,0.5,0,Not rechallenged,1
+3,F1 050uM control,F1,0.5,0,Not rechallenged,0
+3,F1 050uM control,F1,0.5,0,Not rechallenged,0
+3,F1 050uM control,F1,0.5,0,Not rechallenged,0
+3,F1 050uM control,F1,0.5,0,Not rechallenged,0
+3,F1 050uM control,F1,0.5,0,Not rechallenged,0
+3,F1 050uM control,F1,0.5,0,Not rechallenged,0
+3,F1 050uM control,F1,0.5,0,Not rechallenged,0
+3,F1 control 25uM,F1,0,25,Rechallenged,0
+3,F1 control 25uM,F1,0,25,Rechallenged,1
+3,F1 control 25uM,F1,0,25,Rechallenged,2
+3,F1 control 25uM,F1,0,25,Rechallenged,1
+3,F1 control 25uM,F1,0,25,Rechallenged,3
+3,F1 control 25uM,F1,0,25,Rechallenged,0
+3,F1 control 25uM,F1,0,25,Rechallenged,2
+3,F1 control 25uM,F1,0,25,Rechallenged,0
+3,F1 control control,F1,0,0,Not rechallenged,0
+3,F1 control control,F1,0,0,Not rechallenged,1
+3,F1 control control,F1,0,0,Not rechallenged,1
+3,F1 control control,F1,0,0,Not rechallenged,0
+3,F1 control control,F1,0,0,Not rechallenged,0
+3,F1 control control,F1,0,0,Not rechallenged,0
+3,F1 control control,F1,0,0,Not rechallenged,0
+3,F1 control control,F1,0,0,Not rechallenged,0
+3,F1 control control,F1,0,0,Not rechallenged,0
+3,F1 control control,F1,0,0,Not rechallenged,0
+3,F1 control control,F1,0,0,Not rechallenged,0
+3,F1 control control,F1,0,0,Not rechallenged,0
+3,F1 control control,F1,0,0,Not rechallenged,1
+3,F1 control control,F1,0,0,Not rechallenged,0
+3,F1 control control,F1,0,0,Not rechallenged,2
+3,F1 control control,F1,0,0,Not rechallenged,0
+3,F1 control control,F1,0,0,Not rechallenged,0
+3,F1 control control,F1,0,0,Not rechallenged,0
+3,F1 control control,F1,0,0,Not rechallenged,0
+3,F1 control control,F1,0,0,Not rechallenged,0
+3,P0 003uM 25uM,P0,0.03,25,Rechallenged,1
+3,P0 003uM 25uM,P0,0.03,25,Rechallenged,1
+3,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+3,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+3,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+3,P0 003uM 25uM,P0,0.03,25,Rechallenged,5
+3,P0 003uM 25uM,P0,0.03,25,Rechallenged,1
+3,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+3,P0 003uM 25uM,P0,0.03,25,Rechallenged,1
+3,P0 003uM 25uM,P0,0.03,25,Rechallenged,1
+3,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+3,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+3,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+3,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+3,P0 003uM 25uM,P0,0.03,25,Rechallenged,0
+3,P0 003uM 25uM,P0,0.03,25,Rechallenged,1
+3,P0 003uM control,P0,0.03,0,Not rechallenged,0
+3,P0 003uM control,P0,0.03,0,Not rechallenged,0
+3,P0 003uM control,P0,0.03,0,Not rechallenged,0
+3,P0 003uM control,P0,0.03,0,Not rechallenged,0
+3,P0 003uM control,P0,0.03,0,Not rechallenged,0
+3,P0 003uM control,P0,0.03,0,Not rechallenged,0
+3,P0 003uM control,P0,0.03,0,Not rechallenged,3
+3,P0 003uM control,P0,0.03,0,Not rechallenged,0
+3,P0 003uM control,P0,0.03,0,Not rechallenged,1
+3,P0 003uM control,P0,0.03,0,Not rechallenged,0
+3,P0 003uM control,P0,0.03,0,Not rechallenged,0
+3,P0 003uM control,P0,0.03,0,Not rechallenged,0
+3,P0 003uM control,P0,0.03,0,Not rechallenged,0
+3,P0 003uM control,P0,0.03,0,Not rechallenged,0
+3,P0 003uM control,P0,0.03,0,Not rechallenged,0
+3,P0 003uM control,P0,0.03,0,Not rechallenged,0
+3,P0 003uM control,P0,0.03,0,Not rechallenged,0
+3,P0 003uM control,P0,0.03,0,Not rechallenged,0
+3,P0 003uM control,P0,0.03,0,Not rechallenged,0
+3,P0 003uM control,P0,0.03,0,Not rechallenged,0
+3,P0 050uM 25uM,P0,0.5,25,Rechallenged,0
+3,P0 050uM 25uM,P0,0.5,25,Rechallenged,0
+3,P0 050uM 25uM,P0,0.5,25,Rechallenged,0
+3,P0 050uM 25uM,P0,0.5,25,Rechallenged,0
+3,P0 050uM 25uM,P0,0.5,25,Rechallenged,2
+3,P0 050uM 25uM,P0,0.5,25,Rechallenged,0
+3,P0 050uM 25uM,P0,0.5,25,Rechallenged,0
+3,P0 050uM 25uM,P0,0.5,25,Rechallenged,1
+3,P0 050uM 25uM,P0,0.5,25,Rechallenged,0
+3,P0 050uM 25uM,P0,0.5,25,Rechallenged,0
+3,P0 050uM 25uM,P0,0.5,25,Rechallenged,0
+3,P0 050uM 25uM,P0,0.5,25,Rechallenged,2
+3,P0 050uM 25uM,P0,0.5,25,Rechallenged,1
+3,P0 050uM 25uM,P0,0.5,25,Rechallenged,0
+3,P0 050uM 25uM,P0,0.5,25,Rechallenged,3
+3,P0 050uM 25uM,P0,0.5,25,Rechallenged,1
+3,P0 050uM 25uM,P0,0.5,25,Rechallenged,0
+3,P0 050uM 25uM,P0,0.5,25,Rechallenged,1
+3,P0 050uM 25uM,P0,0.5,25,Rechallenged,0
+3,P0 050uM 25uM,P0,0.5,25,Rechallenged,2
+3,P0 050uM control,P0,0.5,0,Not rechallenged,0
+3,P0 050uM control,P0,0.5,0,Not rechallenged,0
+3,P0 050uM control,P0,0.5,0,Not rechallenged,0
+3,P0 050uM control,P0,0.5,0,Not rechallenged,0
+3,P0 050uM control,P0,0.5,0,Not rechallenged,0
+3,P0 050uM control,P0,0.5,0,Not rechallenged,0
+3,P0 050uM control,P0,0.5,0,Not rechallenged,0
+3,P0 050uM control,P0,0.5,0,Not rechallenged,0
+3,P0 050uM control,P0,0.5,0,Not rechallenged,2
+3,P0 050uM control,P0,0.5,0,Not rechallenged,0
+3,P0 050uM control,P0,0.5,0,Not rechallenged,0
+3,P0 050uM control,P0,0.5,0,Not rechallenged,0
+3,P0 050uM control,P0,0.5,0,Not rechallenged,2
+3,P0 050uM control,P0,0.5,0,Not rechallenged,0
+3,P0 050uM control,P0,0.5,0,Not rechallenged,0
+3,P0 control 25uM,P0,0,25,Rechallenged,0
+3,P0 control 25uM,P0,0,25,Rechallenged,0
+3,P0 control 25uM,P0,0,25,Rechallenged,1
+3,P0 control 25uM,P0,0,25,Rechallenged,0
+3,P0 control 25uM,P0,0,25,Rechallenged,1
+3,P0 control 25uM,P0,0,25,Rechallenged,0
+3,P0 control 25uM,P0,0,25,Rechallenged,0
+3,P0 control 25uM,P0,0,25,Rechallenged,0
+3,P0 control 25uM,P0,0,25,Rechallenged,1
+3,P0 control 25uM,P0,0,25,Rechallenged,0
+3,P0 control control,P0,0,0,Not rechallenged,0
+3,P0 control control,P0,0,0,Not rechallenged,0
+3,P0 control control,P0,0,0,Not rechallenged,0
+3,P0 control control,P0,0,0,Not rechallenged,0
+3,P0 control control,P0,0,0,Not rechallenged,0
+3,P0 control control,P0,0,0,Not rechallenged,0
+3,P0 control control,P0,0,0,Not rechallenged,0
+3,P0 control control,P0,0,0,Not rechallenged,0
+3,P0 control control,P0,0,0,Not rechallenged,0
+3,P0 control control,P0,0,0,Not rechallenged,0
+3,P0 control control,P0,0,0,Not rechallenged,0
+3,P0 control control,P0,0,0,Not rechallenged,0
+3,P0 control control,P0,0,0,Not rechallenged,0
+3,P0 control control,P0,0,0,Not rechallenged,0
+3,P0 control control,P0,0,0,Not rechallenged,0
+3,P0 control control,P0,0,0,Not rechallenged,0
+3,P0 control control,P0,0,0,Not rechallenged,0
+3,P0 control control,P0,0,0,Not rechallenged,0
+3,P0 control control,P0,0,0,Not rechallenged,0
+3,P0 control control,P0,0,0,Not rechallenged,0

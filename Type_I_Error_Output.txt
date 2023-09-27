@@ -1,0 +1,10 @@
+Type I error analysis
+Mann-Whitney U Test
+Number of Type I Errors: 179 
+Type I Error Rate: 0.179
+Kruskal Wallis Test
+Number of Type I Errors: 42 
+Type I Error Rate: 0.042 
+Jonckeere Test
+Number of Type I Errors: 37 
+Type I Error Rate: 0.037

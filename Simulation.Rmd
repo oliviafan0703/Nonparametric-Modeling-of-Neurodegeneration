@@ -1,0 +1,740 @@
+
+
+```{r libraries}
+library(tidyverse)
+library(ggplot2)
+library(nnet)
+```
+
+```{r load-date}
+Neurodegeneration_perneuron_scores<-read.csv("Neurodegeneration_perneuron_scores.csv")
+Neurodegeneration_scores<-read.csv("Neurodegeneration_scores.csv")
+```
+
+## Exploratory Data Analysis
+
+```{r}
+ggplot(Neurodegeneration_scores, aes(x = NeuronScore)) +
+  geom_histogram(fill = "lightblue", color = "black", bins = 6) +
+  labs(title = "Histogram of Neuron Scores", x = "Score", y = "Count")
+ggplot(Neurodegeneration_scores, aes(x = Treatment)) +
+  geom_histogram(fill = "lightblue", color = "black") +
+  labs(title = "Histogram of Treatment doses", x = "Score", y = "Count")
+```
+
+## Multinomial 
+
+```{r}
+set.seed(12345)
+sample <- sample(c(TRUE, FALSE), nrow(Neurodegeneration_scores), replace=TRUE, prob=c(0.7,0.3))
+train  <- Neurodegeneration_scores[sample, ]
+test   <- Neurodegeneration_scores[!sample, ]
+
+# Fit the multinomial model
+model <- multinom(NeuronScore ~ as.factor(Replicate) + Generation + Treatment+Rechallenge_dose_uM + Rechallenge_Treatment +Treatment*Generation, data = train)
+
+# View the summary of the model
+summary(model)
+```
+
+```{r}
+# Predict the outcome variable using the fitted model
+in_sample_preds <- predict(model, type = "class")
+
+# Calculate the in-sample accuracy rate
+in_sample_acc <- mean(in_sample_preds == train$NeuronScore)
+print(paste0("In-sample accuracy rate: ", round(in_sample_acc, 2)))
+
+# Predict the outcome variable using the fitted model on the new dataset
+out_of_sample_preds <- predict(model, newdata = test, type = "class")
+
+# Calculate the out-of-sample accuracy rate
+out_of_sample_acc <- mean(out_of_sample_preds == test$NeuronScore)
+print(paste0("Out-of-sample accuracy rate: ", round(out_of_sample_acc, 2)))
+```
+
+
+## ANOVA
+
+```{r}
+# Fit the ANOVA model
+anova_model <- aov(NeuronScore ~ as.factor(Replicate) + Generation + Treatment+Rechallenge_dose_uM + Rechallenge_Treatment + Treatment*Generation, data = train)
+
+# View the summary of the ANOVA model
+summary(anova_model)
+
+# TukeyHSD(anova_model, conf.level=.95, which = c('Replicate','Generation','Rechallenge_Treatment'))
+TukeyHSD(anova_model, conf.level=.95, which = 'Replicate')
+```
+
+
+## Multivariate Simulations
+
+Simulate the treatments and neuron scores independently of one another using the rmultinom function in R
+
+```{r}
+# use table() function to get the count of each value in the column
+counts <- table(Neurodegeneration_scores$Treatment_all)
+# use prop.table() function to get the proportion of each value
+proportions <- prop.table(counts)
+true_proportions_vec <- unname(proportions)
+
+set.seed(1)
+stimulated_samples_proportions<-rmultinom(n=100, size = 562, prob = true_proportions_vec)/562
+
+# calculate MSE
+proportions_df<-as.data.frame(proportions)
+proportions_df<-proportions_df%>%
+    mutate(label = row_number() - 1)
+
+true_labels<-Neurodegeneration_scores%>%left_join(proportions_df, c("Treatment_all"="Var1"))%>%
+  select(Treatment_all,label)
+
+# define a function to calculate the squared error between a vector and a column
+squared_error <- function(x, y) {
+  sum((x - y)^2)
+}
+
+# stimulated 100 samples containing proportions of the 12 categories
+stimulated_samples_proportions
+# true proportions vector
+true_proportions_vec<-as.vector(true_proportions_vec)
+
+# evaluation using MSE
+# Calculate the squared differences between sample and true proportions
+squared_diffs <- (stimulated_samples_proportions - true_proportions_vec)^2
+
+# Calculate the mean squared error for each sample
+mse <- apply(squared_diffs, 2, mean)
+mse
+```
+
+## Visualization for MSE
+
+```{r}
+# Plot histogram with customizations
+#jpeg("histogram.jpeg")
+hist(mse, breaks = 5, col = "steelblue", xlab = "Value", ylab = "Frequency", main = "Histogram of MSE for Uncorrelated Samples")
+#dev.off()
+```
+
+## Generating Bivaraite Ordinal Simulations
+
+Simulate the treatments and neuron scores dependently using the GenOrd function
+
+```{r}
+x<-Neurodegeneration_scores$Treatment
+y<-Neurodegeneration_scores$NeuronScore
+rho <- cor(x,y, method = "spearman")
+
+# Calculate marginal distribution for Rechallenge_dose_uM
+marginal1 <- prop.table(table(x))
+# Calculate cumulative marginal distribution for Rechallenge_dose_uM
+cumulative1 <- cumsum(marginal1)
+# delete the last percentage (1)
+cumulative1<-cumulative1[-length(cumulative1)]
+
+# Calculate marginal distribution for NeuronScore
+marginal2 <- prop.table(table(y))
+# Calculate cumulative marginal distribution for NeuronScore
+cumulative2 <- cumsum(marginal2)
+cumulative2<-cumulative2[-length(cumulative2)]
+
+library(GenOrd)
+#ordsample(Sigma = matrix(c(1, rho, rho, 1), marginal=proportions, nrow = 2), Spearman = TRUE)
+marginal <- list(cumulative1, cumulative2)
+set.seed(123)
+# generate 100 samples using the cumulative marginal distributions
+samples<-ordsample(100, marginal, Sigma = matrix(c(1, rho, rho, 1),2,2), Spearman=TRUE)
+```
+
+## Visualization for Correlated Samples
+
+```{r}
+samples_df<-as.data.frame(samples)
+ggplot(samples_df, aes(x = V1, y = V2)) +
+  geom_point() +
+  labs(title = "Scatter Plot Visualization for Correlated Sampling", x = "Treatment (rank)", y = "Dose (rank)")
+ggsave("correlated.jpeg")
+```
+
+## Function to perform a binary ordinal simulation (6/16/2023)
+
+```{r}
+#' Perform Binary Ordinal Simulation
+#'
+#' This function takes a dataset like the neuron csv file, computes the frequencies of the response and covariate variables,
+#' calculates the correlation between them, and performs a binary ordinal simulation.
+#'
+#' @param dataset A data frame containing the response and covariate variables like the neuron csv file.
+#'        The response variable should be named "NeuronScore" and the covariate variable should be named "Treatment".
+#' @param seed A numeric value to set the random number seed for reproducibility.
+#' @param check_quality A logical value indicating whether to compute quality metrics and produce plots for simulation checking.
+#'
+#' @return A matrix containing the simulated binary ordinal samples.
+
+performBinaryOrdinalSimulation <- function(dataset, seed, check_quality = FALSE) {
+  require(GenOrd)
+  
+  x <- dataset$Treatment
+  y <- dataset$NeuronScore
+  
+  # Calculate correlation using Spearman method
+  rho <- cor(x, y, method = "spearman")
+  
+  # Calculate marginal distribution for Treatment
+  marginal1 <- prop.table(table(x))
+  cumulative1 <- cumsum(marginal1)
+  cumulative1 <- cumulative1[-length(cumulative1)]
+  
+  # Calculate marginal distribution for NeuronScore
+  marginal2 <- prop.table(table(y))
+  cumulative2 <- cumsum(marginal2)
+  cumulative2 <- cumulative2[-length(cumulative2)]
+  
+  # Combine marginal distributions
+  marginal <- list(cumulative1, cumulative2)
+  
+  # Set random number seed for reproducibility
+  set.seed(seed)
+  
+  # Generate samples using binary ordinal simulation
+  samples <- ordsample(100, marginal, Sigma = matrix(c(1, rho, rho, 1), 2, 2), Spearman = TRUE)
+  
+  # Check quality of simulations if requested
+  if (check_quality) {
+    # Compute Mean Squared Error (MSE)
+    mse <- mean((rho - cor(samples[, 1], samples[, 2], method = "spearman"))^2)
+    
+    # Plot correlation comparison
+    plotCorrelationComparison(rho, samples[, 1], samples[, 2])
+    
+    # Return MSE and correlation plot
+    return(list(samples = samples, mse = mse))
+  }
+  
+  # Return simulated binary ordinal samples
+  return(samples)
+}
+
+#' Plot Correlation Comparison
+#'
+#' This function plots the comparison between the true correlation and the simulated correlation.
+#'
+#' @param rho The true correlation value.
+#' @param x The simulated values for variable x.
+#' @param y The simulated values for variable y.
+
+plotCorrelationComparison <- function(rho, x, y) {
+  plot(x, y, main = "Correlation Comparison", xlab = "Simulated x", ylab = "Simulated y")
+  abline(a = 0, b = 1, col = "red")
+  text(0.1, 0.9, paste("True Correlation (rho):", round(rho, 2)), col = "blue")
+}
+```
+
+```{r}
+## TEST CODE for the performBinaryOrdinalSimulation function
+set.seed(123)
+simulation_results <- performBinaryOrdinalSimulation(Neurodegeneration_scores, seed = 123, check_quality = TRUE)
+
+# Access the simulated samples
+simulated_samples <- simulation_results$samples
+# Access the Mean Squared Error (MSE)
+mse <- simulation_results$mse
+
+# Print the MSE
+cat("Mean Squared Error (MSE):", mse, "\n")
+
+# Plot the correlation comparison
+plotCorrelationComparison(rho, simulated_samples[, 1], simulated_samples[, 2])
+```
+
+Attempt to modify code:
+
+```{r}
+performBinaryOrdinalSimulation <- function(dataset, seed, check_quality = FALSE) {
+  require(GenOrd)
+  
+  x <- dataset$Treatment
+  y <- dataset$NeuronScore
+  
+  # Calculate correlation using Spearman method
+  rho <- cor(x, y, method = "spearman")
+  
+  # Calculate marginal distribution for Treatment
+  marginal1 <- prop.table(table(x))
+  cumulative1 <- cumsum(marginal1)
+  cumulative1 <- cumulative1[-length(cumulative1)]
+  
+  # Calculate marginal distribution for NeuronScore
+  marginal2 <- prop.table(table(y))
+  cumulative2 <- cumsum(marginal2)
+  cumulative2 <- cumulative2[-length(cumulative2)]
+  
+  # Combine marginal distributions
+  marginal <- list(cumulative1, cumulative2)
+  
+  # Set random number seed for reproducibility
+  set.seed(seed)
+  
+  # Generate samples using binary ordinal simulation
+  samples <- ordsample(100, marginal, Sigma = matrix(c(1, rho, rho, 1), 2, 2), Spearman = TRUE)
+ 
+    
+  # Check quality of simulations if requested
+  if (check_quality) {
+    # Compute Mean Squared Error (MSE)
+    mse <- mean((rho - cor(samples[, 1], samples[, 2], method = "spearman"))^2)
+    
+    correlation_vector <- sapply(1:100, function(i) {
+      cor(samples[i, 1], samples[i, 2], method = "spearman")
+    })
+    
+    # Plot correlation comparison
+    plotCorrelationComparison(rho, samples[, 1], samples[, 2])
+    
+    # Return MSE and correlation plot
+    return(list(samples = samples, mse = mse, correlation_vector=correlation_vector))
+  }
+  return(samples)
+}
+
+plotCorrelationHistogram <- function(rho, correlations) {
+  if (length(correlations) > 0 && !all(is.na(correlations))) {
+    hist(correlations, breaks = "FD", main = "Simulated Correlations", xlab = "Correlation", ylab = "Frequency", col = "lightblue", border = "white")
+    abline(v = rho, col = "red", lwd = 2)
+    legend("topright", legend = c("True Correlation", "Simulated Correlations"), col = c("red", "black"), lwd = c(2, 1))
+  } else {
+    cat("No valid simulated correlations to plot.")
+  }
+}
+
+set.seed(123)
+simulation_results <- performBinaryOrdinalSimulation(Neurodegeneration_scores, seed = 123, check_quality = TRUE)
+
+# Access the simulated samples
+simulated_samples <- simulation_results$samples
+# Access the Mean Squared Error (MSE)
+correlations <- simulation_results$correlation_vector
+
+# Print the MSE
+cat("Mean Squared Error (MSE):", mse, "\n")
+
+# Plot the correlation comparison
+plotCorrelationComparison(rho, correlations)
+
+# correlation for one sample:
+cor(simulated_samples[, 1], simulated_samples[, 2], method = "spearman")
+```
+
+### ANOVA Simulation Update
+
+```{r}
+library(GenOrd)
+
+# Set seed for reproducibility
+set.seed(123)
+
+# Number of samples and observations per sample
+num_samples <- 100
+num_observations <- 1000
+
+# Original dataset
+dataset <- Neurodegeneration_scores
+
+# Calculate correlation using Spearman method
+rho <- cor(dataset$Treatment, dataset$NeuronScore, method = "spearman")
+
+# Calculate marginal distribution for Treatment
+marginal1 <- prop.table(table(dataset$Treatment))
+cumulative1 <- cumsum(marginal1)
+cumulative1 <- cumulative1[-length(cumulative1)]
+
+# Calculate marginal distribution for NeuronScore
+marginal2 <- prop.table(table(dataset$NeuronScore))
+cumulative2 <- cumsum(marginal2)
+cumulative2 <- cumulative2[-length(cumulative2)]
+
+# Combine marginal distributions
+marginal <- list(cumulative1, cumulative2)
+
+# Create a function to perform the ANOVA test and return the p-value
+perform_ANOVA <- function(data) {
+  model <- aov(NeuronScore ~ Treatment, data = data)
+  p_value <- summary(model)[[1]][["Pr(>F)"]][1]
+  return(p_value)
+}
+
+
+# Parameters
+alpha <- 1
+beta_values <- c(0, 0.2, 0.5, 1, 2)  # Values of beta to test
+
+# Create a data frame to store results
+results <- data.frame(Beta = numeric(0), Rejected = numeric(0), Not_Rejected = numeric(0))
+
+# Generate samples and perform ANOVA tests
+for (beta in beta_values) {
+  rejected_count <- 0
+  not_rejected_count <- 0
+  
+  for (i in 1:num_samples) {
+    # Generate data using binary ordinal simulation
+    samples <- ordsample(num_observations, marginal, Sigma = matrix(c(1, rho, rho, 1), 2, 2), Spearman = TRUE)
+    simulated_data <- data.frame(Treatment = factor(samples[, 1]), NeuronScore = samples[, 2])
+    
+    # Add noise using beta
+    simulated_data$NeuronScore <- simulated_data$NeuronScore + rnorm(num_observations, mean = 0, sd = beta)
+    
+    # Perform ANOVA test
+    p_value <- perform_ANOVA(simulated_data)
+    
+    # Check if null hypothesis is rejected
+    if (p_value < 0.05) {
+      rejected_count <- rejected_count + 1
+    } else {
+      not_rejected_count <- not_rejected_count + 1
+    }
+  }
+  
+  # Calculate proportions and store in results data frame
+  results <- rbind(results, data.frame(Beta = beta, 
+                                       Rejected = rejected_count / num_samples,
+                                       Not_Rejected = not_rejected_count / num_samples))
+}
+
+# Print the results
+print(results)
+
+# save the results
+# saveRDS(results, "anova_results.csv")
+```
+
+## Update to code
+
+```{r}
+library(GenOrd)
+
+# Set seed for reproducibility
+set.seed(123)
+
+# Original dataset
+dataset <- Neurodegeneration_scores
+
+# Calculate correlation using Spearman method
+rho <- cor(dataset$Treatment, dataset$NeuronScore, method = "spearman")
+
+# Calculate marginal distribution for Treatment
+marginal1 <- prop.table(table(dataset$Treatment))
+cumulative1 <- cumsum(marginal1)
+cumulative1 <- cumulative1[-length(cumulative1)]
+
+# Calculate marginal distribution for NeuronScore
+marginal2 <- prop.table(table(dataset$NeuronScore))
+cumulative2 <- cumsum(marginal2)
+cumulative2 <- cumulative2[-length(cumulative2)]
+
+# Combine marginal distributions
+marginal <- list(cumulative1, cumulative2)
+
+# Function to generate samples according to the linear model
+generateLinearModelSamples <- function(beta, num_samples, num_observations) {
+  # Generate ranks using ordsample
+  ranks <- ordsample(num_observations, marginal, Sigma = matrix(c(1, rho, rho, 1), 2, 2), Spearman = TRUE)
+  
+  # Convert ranks to actual values based on marginal distributions
+  treatment <- findInterval(ranks[, 1], c(0, cumulative1))
+  neuron_score <- findInterval(ranks[, 2], c(0, cumulative2))
+  
+  noise <- rnorm(num_observations, mean = 0, sd = beta)
+  neuron_score <- alpha + beta * as.numeric(treatment == 2) + noise
+  
+  simulated_data <- data.frame(Treatment = treatment, NeuronScore = neuron_score)
+  return(simulated_data)
+}
+
+# Parameters
+alpha <- 1
+beta_values <- c(0, 0.2, 0.5, 1, 2)  # Values of beta to test
+num_samples <- 100
+num_observations <- 1000
+
+# Create a function to perform the ANOVA test and return the p-value
+perform_ANOVA <- function(data) {
+  model <- aov(NeuronScore ~ Treatment, data = data)
+  p_value <- summary(model)[[1]][["Pr(>F)"]][1]
+  return(p_value)
+}
+
+# Create a data frame to store results
+results <- data.frame(Beta = numeric(0), Rejected = numeric(0), Not_Rejected = numeric(0))
+
+# Generate samples and perform ANOVA tests
+for (beta in beta_values) {
+  rejected_count <- 0
+  not_rejected_count <- 0
+  
+  for (i in 1:num_samples) {
+    # Generate data using the linear model
+    simulated_data <- generateLinearModelSamples(beta, num_samples, num_observations)
+    
+    # Remove rows with missing values
+    simulated_data <- simulated_data[complete.cases(simulated_data), ]
+    
+    # Perform ANOVA test
+    p_value <- perform_ANOVA(simulated_data)
+    
+    # Check if null hypothesis is rejected
+    if (!is.na(p_value) && p_value < 0.05) {
+      rejected_count <- rejected_count + 1
+    } else {
+      not_rejected_count <- not_rejected_count + 1
+    }
+  }
+  
+  # Calculate proportions and store in results data frame
+  results <- rbind(results, data.frame(Beta = beta, 
+                                       Rejected = rejected_count / num_samples,
+                                       Not_Rejected = not_rejected_count / num_samples))
+}
+
+# Print the results
+print(results)
+
+# save the results
+saveRDS(results, "linear_model_anova_results.csv")
+```
+
+# Statistical Assessments (9/18/2023)
+
+### Mann-Whitney U Test
+- comparing damage scores for the lowest dose and the highest dose:
+Null Hypothesis ($H_0$): The distribution of damage scores for the lowest dose is equal to the distribution of damage scores for the highest dose.
+
+Alternative Hypothesis ($H_1$):
+The distribution of damage scores for the lowest dose is not equal to the distribution of damage scores for the highest dose.
+
+
+### Kruskal-Wallis Test:
+- comparing damage scores for all doses
+Null Hypothesis ($H_0$): There is no significant difference in the distribution of damage scores among the different doses.
+
+Alternative Hypothesis ($H_1$):
+There is a significant difference in the distribution of damage scores among the different doses.
+
+### Jonckheere-Terpstra Trend Test (testing for a trend in damage scores across doses):
+
+Null Hypothesis ($H_0$):
+There is no trend in the distribution of damage scores across the different doses.
+
+Alternative Hypothesis ($H_1$):
+There is a trend in the distribution of damage scores across the different doses.
+
+- Explain how the choice of correlation (i.e., zero vs nonzero) is related to Type I/II errors
+
+Zero Correlation: If we assume zero correlation (no relationship) between variables when there is actually a nonzero correlation (a real relationship exists), we may commit a Type II error. In this case, we fail to detect a true effect.
+Nonzero Correlation: If we assume a nonzero correlation between variables when there is no actual correlation, we may commit a Type I error. In this case, we conclude there is an effect or relationship when there isn't one, which can lead to incorrect decisions.
+
+- Explain at a high-level the difference between generate bivariate data from the linear model and from the ordinal model
+
+Linear models assume a linear relationship between continuous variables, while ordinal models are used for ordered categorical data and consider the ordinal ranking of categories.
+
+## Type I Error Analysis 
+
+```{r}
+#### Type I Error Analysis #####
+# RUNNING STATISTICAL TESTS ON NON-CORRELATED SAMPLES
+library(PMCMRplus) # Jonckheere Test
+# convert ranks to raw dosage and damage scores
+convert_ranks_to_raw<-function(sample){
+  # Converting samples to original dosages and damage scores
+  dose_mapping <- c(0.00, 0.03, 0.50)
+  # Convert the first column of samples from ranks to the dosages
+  converted_sample <- sample
+  converted_sample[, 1] <- dose_mapping[sample[, 1]]
+  # Convert the second column from ranks to damage scores
+  converted_sample[, 2] <- sample[, 2] - 1
+  converted_sample
+}
+
+# Function to generate a single data set with a given correlation (rho)
+generate_data_set <- function(rho){
+  # Sample data for Treatment and NeuronScore with a correlation of 0
+  data<-ordsample(100, marginal, Sigma = matrix(c(1, rho, rho, 1),2,2), Spearman=TRUE)
+  # convert ranks to raw dosage and damage scores
+  converted_data<-convert_ranks_to_raw(data)
+  converted_data
+}
+
+n_simulations <- 10000  # Number of simulations
+alpha <- 0.05 # Significance level for Type I error
+type_i_error_count_mwu <- 0
+type_i_error_count_kruskal <- 0
+type_i_error_count_jonck <- 0
+
+# Perform statistical test for 1000 simulations
+for (i in 1:n_simulations) {
+  data<-generate_data_set(rho=0)
+  #######################
+  ## Mann-Whitney TEST ##
+  group_high <- data[data[, 1] == 0, ]
+  group_middle <- data[data[, 1] == 0.03, ]
+  group_low <- data[data[, 1] == 0.50, ]
+  mwu_result1 <- wilcox.test(group_high[,1], group_middle[,2])
+  mwu_result2 <- wilcox.test(group_high[,1], group_low[,2])
+  mwu_result3 <- wilcox.test(group_low[,1], group_middle[,2])
+  alpha_adjusted <- alpha / 3
+  # Check if it's a Type I error (p-value is less than alpha)
+  if (mwu_result1$p.value < alpha_adjusted ||mwu_result3$p.value < alpha_adjusted ||mwu_result3$p.value < alpha_adjusted) {
+    type_i_error_count_mwu <- type_i_error_count_mwu + 1
+  }
+  #########################
+  ## Kruskal Wallis TEST ##
+  df<-as.data.frame(data)%>%
+    rename("Dosage"="V1","Degeneration"="V2")
+  # Run Kruskal-Wallis test
+    kruskal_result <-  kruskal.test(Degeneration ~ Dosage, data = df)
+    # Check if it's a Type I error (p-value is less than alpha)
+    if (kruskal_result$p.value < alpha) {
+      type_i_error_count_kruskal <- type_i_error_count_kruskal + 1
+    }
+  ##############################
+  ## Jonckheere-Terpstra test ##
+    jonck_result <- jonckheereTest(data[, 1], data[, 2])
+    
+    if (jonck_result$p.value >= alpha) {
+      type_i_error_count_jonck <- type_i_error_count_jonck + 1
+    }
+}
+## Mann-Whitney
+type_i_error_rate_mwu <- type_i_error_count_mwu / n_simulations
+cat("\nType I error analysis")
+cat("Mann-Whitney U Test")
+cat("Number of Type I Errors:", type_i_error_count_mwu, "\n")
+cat("Type I Error Rate:", type_i_error_rate_mwu, "\n")
+## Kruskal Wallis
+type_i_error_rate_kruskal <- type_i_error_count_kruskal / n_simulations
+cat("Kruskal Wallis Test")
+cat("Number of Type I Errors:", type_i_error_count_kruskal, "\n")
+cat("Type I Error Rate:", type_i_error_rate_kruskal, "\n")
+## Jonckheere-Terpstra test
+type_i_error_rate_jonck <- type_i_error_count_jonck / n_simulations
+cat("Jonckeere Test")
+cat("Number of Type I Errors:", type_i_error_count_jonck, "\n")
+cat("Type I Error Rate:", type_i_error_rate_jonck, "\n")
+```
+
+## Type II Error Analysis
+
+```{r}
+# Function to perform Type II error analysis for a specific correlation (rho)
+type_ii_error_analysis <- function(rho, n_simulations = 100, alpha = 0.05) {
+  type_ii_error_count_mwu <- 0
+  type_ii_error_count_kruskal <- 0
+  type_ii_error_count_jonck <- 0
+
+  # Perform statistical tests for the specified number of simulations
+  for (i in 1:n_simulations) {
+    data <- generate_data_set(rho)
+    
+    #######################
+    ## Mann-Whitney TEST ##
+    group_high <- data[data[, 1] == 0, ]
+    group_low <- data[data[, 1] == 0.50, ]
+    mwu_result <- wilcox.test(data[, 1], data[, 2])
+    
+    # Check if it's a Type II error (p-value is greater than alpha)
+    if (mwu_result$p.value >= alpha) {
+      type_ii_error_count_mwu <- type_ii_error_count_mwu + 1
+    }
+    
+    #########################
+    ## Kruskal Wallis TEST ##
+    df <- as.data.frame(data) %>%
+      rename("Dosage" = "V1", "Degeneration" = "V2")
+    
+    # Run Kruskal-Wallis test
+    kruskal_result <- kruskal.test(Degeneration ~ Dosage, data = df)
+    
+    # Check if it's a Type II error (p-value is greater than alpha)
+    if (kruskal_result$p.value >= alpha) {
+      type_ii_error_count_kruskal <- type_ii_error_count_kruskal + 1
+    }
+    
+    ##############################
+    ## Jonckheere-Terpstra test ##
+    jonck_result <- jonckheereTest(data[, 1], data[, 2])
+    
+    if (jonck_result$p.value >= alpha) {
+      type_ii_error_count_jonck <- type_ii_error_count_jonck + 1
+    }
+  }
+  
+  # Calculate power (1 - Type II error rate)
+  type_ii_rate_mwu<-type_ii_error_count_mwu / n_simulations
+  type_ii_rate_kruskal<-type_ii_error_count_kruskal / n_simulations
+  type_ii_rate_jonck<-type_ii_error_count_jonck / n_simulations
+
+  power_mwu <- 1 - (type_ii_error_count_mwu / n_simulations)
+  power_kruskal <- 1 - (type_ii_error_count_kruskal / n_simulations)
+  power_jonck <- 1 - (type_ii_error_count_jonck / n_simulations)
+  
+  # Return results
+  results <- data.frame(
+    rho = rho,
+    type_ii_rate_mwu=type_ii_rate_mwu,
+    type_ii_rate_kruskal=type_ii_rate_kruskal,
+    type_ii_rate_jonck=type_ii_rate_jonck,
+    power_mwu = power_mwu,
+    power_kruskal = power_kruskal,
+    power_jonck = power_jonck
+  )
+  
+  return(results)
+}
+
+# Define the sequence of correlations
+correlations <- seq(-0.7, 0.7, by = 0.01)
+
+# Loop through the correlations
+for (rho in correlations) {
+  # Call your type II error analysis function here and store the results
+  results <- type_ii_error_analysis(rho)
+  
+  # Append the results as a column to the results list
+  results_list <- c(results_list, list(results))
+}
+
+# Convert the results list to a data frame
+results_df <- do.call(rbind, results_list)
+
+# Print or further analyze the results_df
+print(results_df)
+#write.csv(results_df, "type_ii_error.csv")
+```
+
+## Statistical Test Visualizations
+
+```{r}
+type_ii_errors <- results_df %>% 
+  select("rho","type_ii_rate_mwu","type_ii_rate_kruskal", "type_ii_rate_jonck") %>% 
+  pivot_longer(-rho, names_to = "variable", values_to = "value")
+
+ggplot(type_ii_errors, aes(rho, value, colour = variable)) + geom_line()+
+  labs(
+    x = "Rho",
+    y = "Type II Error",
+    color = "Test")
+#ggsave("type_ii_errors2.jpeg", width = 4, height = 4)
+
+type_ii_errors_power <- results_df %>% 
+  select("rho","power_mwu","power_kruskal", "power_jonck") %>% 
+  pivot_longer(-rho, names_to = "variable", values_to = "value")
+
+ggplot(type_ii_errors_power, aes(rho, value, colour = variable)) + geom_line()+
+  labs(
+    x = "Rho",
+    y = "Power",
+    color = "Test")
+#ggsave("type_ii_errors_power2.jpeg")
+```

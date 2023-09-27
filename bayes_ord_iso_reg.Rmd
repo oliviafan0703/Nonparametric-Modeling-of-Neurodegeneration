@@ -1,0 +1,231 @@
+---
+title: "Bayesian Ordinal Isotonic Regressions"
+author: "Rick Presman"
+date: "8/14/2023"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(truncnorm)
+```
+
+## Data and parameters
+
+```{r}
+# Load data
+setwd("/Users/rickpresman/Documents/GitHub/neuron")
+neuron <- read.csv("Neurodegeneration_scores.csv")
+
+# Subset data
+df <- neuron[, c("Treatment", "NeuronScore")]
+```
+
+
+## Gibbs sampler function
+
+```{r}
+# Function to compute w's
+w_from_x <- function(x, gamma) { ## DOUBLE CHECK DIMENSIONALITY
+  w <- matrix(0, length(x), length(gamma))
+  for (i in 1:length(x)) {
+    t1 <- sum(x[i] >= gamma)
+    if (t1 > 0) {
+      w[i, t1] <- x[i] - gamma[t1]
+      w[i, 1:(t1-1)] <- diff(gamma)[1:(t1-1)]
+    }
+  }
+  w <- cbind()
+  return(w)
+}
+
+# Integrand for Gibbs sampler
+pdf_over_cdf <- function(x, E, V, lambda) {
+  return( dnorm(x, E, sqrt(V)) / pnorm(x/lambda, 0, 1) )
+}
+```
+
+
+```{r}
+sampler <- function(y, x, tau_init, beta0_init, beta_init, gamma_init, Z_init, a, b, mu_0, lambda_0, lambda, pi0, seed_) {
+  # Set seed
+  set.seed(seed_)
+  
+  # Update inputs to be current parameters
+  n <- length(x)
+  K <- length(gamma_init)
+  tau_new <- tau_init
+  beta0_new <- beta0_init
+  beta_new <- beta_init
+  gamma_new <- gamma_init
+  Z_new <- Z_init
+  
+  # Initialize outputs
+  tau_vec <- numeric(num_iter)
+  beta0_vec <- numeric(num_iter)
+  beta_mat <- matrix(0, num_iter, length(beta_init))
+  gamma_mat <- matrix(0, num_iter, length(gamma_init))
+  Z_mat <- matrix(0, num_iter, length(y))
+  
+  for (i in 1:num_iter) {
+    # Transform x's to w's using updated gamma draws
+    w <- w_from_x(x, gamma_new)
+    
+    # Update beta_j
+    for (j in K:1) {
+      y_star <- y
+      if (j == K) {
+        for (m in 1:n) {
+          y_star[m] <- y[m] - sum(w[m,-j] * beta_new[-j])
+        }
+        Vj1 <- 1/(tau_new * sum(w[,j]^2) + lambda^-2)
+        Ej1 <- Vj1 * (tau_new * sum(w[,j] * y_star) + lambda^-2 * beta_new[j-1])
+        c <- pi0[j] * pnorm(beta_new[j-1]/lambda) * dnorm(0, Ej1, sqrt(Vj1))
+        d <- (1 - pi0[j]) * pnorm(Ej1/sqrt(Vj1)) * dnorm(beta_new[j-1], 0, lambda^2)
+        pij1_a <- c/(c + d)
+        delta <- rbinom(1, 1, pij1_a)
+        beta_new[j] <- ifelse(delta,
+                              0,
+                              rtruncnorm(1, a = 0, b = Inf,
+                                        mean = Ej1, sd = sqrt(Vj1)))
+      }
+      else {
+        if (beta_new[j+1] == 0) {
+          if (j == 1) {
+            beta_prev <- 0
+          }
+          else {
+            beta_prev <- beta_new[j-1]
+          }
+        y_star <- y
+        for (m in 1:n) {
+          y_star[m] <- y[m] - sum(w[m,-j] * beta_new[-j])
+        }
+        Vj1 <- 1/(tau_new * sum(w[,j]^2) + lambda^-2)
+        Ej1 <- Vj1 * (tau_new * sum(w[,j] * y_star) + lambda^-2 * beta_prev)
+        
+        c <- pi0[j] * pnorm(beta_prev/lambda) * dnorm(0, Ej1, sqrt(Vj1))
+        d <- (1 - pi0[j]) * pnorm(Ej1/sqrt(Vj1)) * dnorm(beta_prev, 0, lambda^2)
+        pij1_b <- c/(c+d)
+        delta <- rbinom(1, 1, pij1_b)
+        beta_new[j] <- ifelse(delta,
+                              0,
+                              rtruncnorm(1, a = 0, b = Inf,
+                                        mean = Ej1, sd = sqrt(Vj1)))
+        }
+        else {
+          if (j == 1) {
+            beta_prev <- 0
+          }
+          else {
+            beta_prev <- beta_new[j-1]
+          }
+          for (m in 1:n) {
+            y_star[m] <- y[m] - sum(w[m,-j] * beta_new[-j])
+          }
+          Vj2 <- 1/(tau_new * sum(w[,j]^2) + 2*lambda^-2)
+          Ej2 <- Vj1 * (tau_new * sum(w[,j] * y_star) + lambda^-2 * (beta_prev + beta_new[j+1]))
+          pij2 <- integrate(pdf_over_cdf,
+                            lower = 0, upper = Inf,
+                            E = Ej2, V = Vj2,
+                            lambda = lambda)
+          delta <- rbinom(1, 1, pij1)
+          beta_jk <- rtruncnorm(100, a = 0, b = Inf,
+                                mean = Ej2, sd = sqrt(Vj2))
+          beta_new[j] <- sample(beta_jk,
+                                size = 1,
+                                prob = 1/pnorm(beta_jk/lambda))
+        }
+      }
+    }
+    beta_mat[i, ] <- beta_new
+    
+    # Update beta_0
+    kappa <- (n * tau_new + 1/lambda_0^2)
+    beta0_new <- rnorm(1, (1/kappa) * (tau_new * norm(Z_new - w %*% matrix(beta_new, ncol = 1), "2")^2 + mu_0/lambda_0^2), 1/kappa)
+    beta0_vec[i] <- beta0_new
+    
+    # Update tau (1/sigma^2)
+    tau_new <- rgamma(1, a + n/2, b + norm(Z_new - w %*% matrix(beta_new, ncol = 1), "2")^2)
+    tau_vec[i] <- tau_new
+    
+    # Update gamma
+    for (k in 1:K) {
+      lb <- max(Z_new[y == k-1])
+      ub <- min(Z_new[y == k])
+      prob_lb <- pnorm((lb - mu[k])/sigma[k])
+      prob_ub <- max(prob_lb, pnorm((ub - mu[k])/sigma[k]))
+      u <- runif(1, prob_lb, prob_ub)
+      gamma_new[k] <- mu[k] + sigma[k] * qnorm(u)
+    }
+    gamma_mat[i, ] <- gamma_new
+    
+    # Update Z
+    for (j in 1:length(y)) {
+      temp <- w[j,] %*% matrix(beta_new, ncol = 1) ## MAY NEED TO TRANSPOSE beta_new
+      lb <- max(-Inf, gamma[y[j] - 1], na.rm = TRUE)
+      ub <- min(gamma[y[j]], Inf, na.rm = TRUE)
+      u <- runif(1, pnorm((a - temp) / sqrt(tau_new)),
+                 pnorm((b - temp) / sqrt(tau_new)))
+      Z_new[j] <- temp + sqrt(tau_new) * qnorm(u)
+    }
+    Z_mat[i, ] <- Z_new
+  }
+  return(list(tau_vec,
+              beta0_vec,
+              beta_mat,
+              gamma_mat,
+              Z_mat,
+              beta_mat))
+}
+
+#out_ <- sampler(y, x, tau_init, beta0_init, beta_init, gamma_init, Z_init, a, b, mu_0, lambda_0, lambda, pi0, seed_)
+```
+
+```{r}
+# Initialize parameters
+y <- df$NeuronScore
+x <- df$Treatment
+
+n <- length(y)
+K <- 4#max(y)
+tau_init <- 1 ## Parameterizing the model in terms of precision instead of variance
+gamma_init <- seq(0, 1, length.out = K)
+Z_init <- rep(0, n)
+beta0_init <- 0
+beta_init <- rep(0, K)
+
+w <- w_from_x(x, gamma_init)
+
+# Hyperparameters
+a <- b <- 1
+mu_0 <- 1
+lambda_0 <- 1
+lambda <- 1
+mu <- rep(0, K)
+sigma <- rep(1, K)
+pi0 <- rep(0.5^(1/K), K)
+
+# Model parameters
+seed_ <- 0
+num_iter <- 100
+```
+
+```{r}
+############################
+# Output
+#  return(list(tau_vec,
+#              beta0_vec,
+#              beta_mat,
+#              gamma_mat,
+#              Z_mat,
+#              beta_mat))
+############################
+
+# Run Gibbs sampler
+out_ <- sampler(y, x, tau_init, beta0_init, beta_init, gamma_init, Z_init, a, b, mu_0, lambda_0, lambda, pi0, seed_)
+```
+
+
+
