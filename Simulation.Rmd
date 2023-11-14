@@ -114,7 +114,7 @@ mse
 ```{r}
 # Plot histogram with customizations
 #jpeg("histogram.jpeg")
-hist(mse, breaks = 5, col = "steelblue", xlab = "Value", ylab = "Frequency", main = "Histogram of MSE for Uncorrelated Samples")
+hist(mse, breaks = 5, col = "steelblue", xlab = "Mean Squared Error", ylab = "Frequency", main = "Histogram of MSE for Uncorrelated Samples")
 #dev.off()
 ```
 
@@ -154,8 +154,8 @@ samples<-ordsample(100, marginal, Sigma = matrix(c(1, rho, rho, 1),2,2), Spearma
 samples_df<-as.data.frame(samples)
 ggplot(samples_df, aes(x = V1, y = V2)) +
   geom_point() +
-  labs(title = "Scatter Plot Visualization for Correlated Sampling", x = "Treatment (rank)", y = "Dose (rank)")
-ggsave("correlated.jpeg")
+  labs(title = "Scatter Plot Visualization for Correlated Sampling", x = "Neuron Score (rank)", y = "Dose (rank)")
+#ggsave("correlated.jpeg")
 ```
 
 ## Function to perform a binary ordinal simulation (6/16/2023)
@@ -541,12 +541,14 @@ Linear models assume a linear relationship between continuous variables, while o
 
 ## Type I Error Analysis 
 
+
 ```{r}
 #### Type I Error Analysis #####
 # RUNNING STATISTICAL TESTS ON NON-CORRELATED SAMPLES
 library(PMCMRplus) # Jonckheere Test
+library(GenOrd)
 # convert ranks to raw dosage and damage scores
-convert_ranks_to_raw<-function(sample){
+convert_ranks_to_raw <- function(sample) {
   # Converting samples to original dosages and damage scores
   dose_mapping <- c(0.00, 0.03, 0.50)
   # Convert the first column of samples from ranks to the dosages
@@ -558,11 +560,11 @@ convert_ranks_to_raw<-function(sample){
 }
 
 # Function to generate a single data set with a given correlation (rho)
-generate_data_set <- function(rho){
+generate_data_set <- function(rho) {
   # Sample data for Treatment and NeuronScore with a correlation of 0
-  data<-ordsample(100, marginal, Sigma = matrix(c(1, rho, rho, 1),2,2), Spearman=TRUE)
+  data <- ordsample(100, marginal, Sigma = matrix(c(1, rho, rho, 1), 2, 2), Spearman = TRUE)
   # convert ranks to raw dosage and damage scores
-  converted_data<-convert_ranks_to_raw(data)
+  converted_data <- convert_ranks_to_raw(data)
   converted_data
 }
 
@@ -571,57 +573,97 @@ alpha <- 0.05 # Significance level for Type I error
 type_i_error_count_mwu <- 0
 type_i_error_count_kruskal <- 0
 type_i_error_count_jonck <- 0
+type_i_error_count_tukey <- 0
+type_i_error_count_anova <- 0
 
 # Perform statistical test for 1000 simulations
 for (i in 1:n_simulations) {
-  data<-generate_data_set(rho=0)
+  data <- generate_data_set(rho = 0)
+  
   #######################
   ## Mann-Whitney TEST ##
   group_high <- data[data[, 1] == 0, ]
   group_middle <- data[data[, 1] == 0.03, ]
   group_low <- data[data[, 1] == 0.50, ]
-  mwu_result1 <- wilcox.test(group_high[,1], group_middle[,2])
-  mwu_result2 <- wilcox.test(group_high[,1], group_low[,2])
-  mwu_result3 <- wilcox.test(group_low[,1], group_middle[,2])
+  
+  mwu_result1 <- wilcox.test(group_high[, 1], group_middle[, 2])
+  mwu_result2 <- wilcox.test(group_high[, 1], group_low[, 2])
+  mwu_result3 <- wilcox.test(group_low[, 1], group_middle[, 2])
   alpha_adjusted <- alpha / 3
+  
   # Check if it's a Type I error (p-value is less than alpha)
-  if (mwu_result1$p.value < alpha_adjusted ||mwu_result3$p.value < alpha_adjusted ||mwu_result3$p.value < alpha_adjusted) {
+  if (mwu_result1$p.value < alpha_adjusted || mwu_result3$p.value < alpha_adjusted || mwu_result3$p.value < alpha_adjusted) {
     type_i_error_count_mwu <- type_i_error_count_mwu + 1
   }
+  
   #########################
   ## Kruskal Wallis TEST ##
-  df<-as.data.frame(data)%>%
-    rename("Dosage"="V1","Degeneration"="V2")
+  df <- as.data.frame(data) %>%
+    rename("Dosage" = "V1", "Degeneration" = "V2")
   # Run Kruskal-Wallis test
-    kruskal_result <-  kruskal.test(Degeneration ~ Dosage, data = df)
-    # Check if it's a Type I error (p-value is less than alpha)
-    if (kruskal_result$p.value < alpha) {
-      type_i_error_count_kruskal <- type_i_error_count_kruskal + 1
-    }
+  kruskal_result <- kruskal.test(Degeneration ~ Dosage, data = df)
+  
+  # Check if it's a Type I error (p-value is less than alpha)
+  if (kruskal_result$p.value < alpha) {
+    type_i_error_count_kruskal <- type_i_error_count_kruskal + 1
+  }
+  
   ##############################
   ## Jonckheere-Terpstra test ##
     jonck_result <- jonckheereTest(data[, 1], data[, 2])
     
-    if (jonck_result$p.value >= alpha) {
+    if (jonck_result$p.value < alpha) {
       type_i_error_count_jonck <- type_i_error_count_jonck + 1
     }
+  
+  ######################
+  ## Pairwise t-tests ##
+  pairwise_tukey_result <- pairwise.t.test(df$Degeneration, df$Dosage, p.adj = "none")
+  
+  if (any(na.omit(pairwise_tukey_result$p.value) < alpha)) {
+    type_i_error_count_tukey <- type_i_error_count_tukey + 1
+  }
+  
+  ####################
+  ## ANOVA test ##
+  anova_result <- aov(Degeneration ~ Dosage, data = df)
+  
+  if (summary(anova_result)[[1]][["Pr(>F)"]][[1]]< alpha) {
+    type_i_error_count_anova <- type_i_error_count_anova + 1
+  }
+  
 }
+
 ## Mann-Whitney
 type_i_error_rate_mwu <- type_i_error_count_mwu / n_simulations
 cat("\nType I error analysis")
 cat("Mann-Whitney U Test")
 cat("Number of Type I Errors:", type_i_error_count_mwu, "\n")
 cat("Type I Error Rate:", type_i_error_rate_mwu, "\n")
+
 ## Kruskal Wallis
 type_i_error_rate_kruskal <- type_i_error_count_kruskal / n_simulations
 cat("Kruskal Wallis Test")
 cat("Number of Type I Errors:", type_i_error_count_kruskal, "\n")
 cat("Type I Error Rate:", type_i_error_rate_kruskal, "\n")
+
 ## Jonckheere-Terpstra test
 type_i_error_rate_jonck <- type_i_error_count_jonck / n_simulations
 cat("Jonckeere Test")
 cat("Number of Type I Errors:", type_i_error_count_jonck, "\n")
 cat("Type I Error Rate:", type_i_error_rate_jonck, "\n")
+
+## Pairwise t-tests
+type_i_error_rate_tukey <- type_i_error_count_tukey / n_simulations
+cat("Pairwise Tukey Test")
+cat("Number of Type I Errors:", type_i_error_count_tukey, "\n")
+cat("Type I Error Rate:", type_i_error_rate_tukey, "\n")
+
+## ANOVA test
+type_i_error_rate_anova <- type_i_error_count_anova / n_simulations
+cat("ANOVA Test")
+cat("Number of Type I Errors:", type_i_error_count_anova, "\n")
+cat("Type I Error Rate:", type_i_error_rate_anova, "\n")
 ```
 
 ## Type II Error Analysis
@@ -632,20 +674,25 @@ type_ii_error_analysis <- function(rho, n_simulations = 100, alpha = 0.05) {
   type_ii_error_count_mwu <- 0
   type_ii_error_count_kruskal <- 0
   type_ii_error_count_jonck <- 0
+  type_ii_error_count_tukey<-0
+  type_ii_error_count_anova<-0
 
   # Perform statistical tests for the specified number of simulations
   for (i in 1:n_simulations) {
     data <- generate_data_set(rho)
-    
+    alpha <-0.05
     #######################
     ## Mann-Whitney TEST ##
     group_high <- data[data[, 1] == 0, ]
+    group_middle <- data[data[, 1] == 0.03, ]
     group_low <- data[data[, 1] == 0.50, ]
-    mwu_result <- wilcox.test(data[, 1], data[, 2])
-    
-    # Check if it's a Type II error (p-value is greater than alpha)
-    if (mwu_result$p.value >= alpha) {
-      type_ii_error_count_mwu <- type_ii_error_count_mwu + 1
+    mwu_result1 <- wilcox.test(group_high[,1], group_middle[,2])
+    mwu_result2 <- wilcox.test(group_high[,2], group_low[,2])
+    mwu_result3 <- wilcox.test(group_low[,1], group_middle[,2])
+    alpha_adjusted <- alpha / 3
+    # Check if it's a Type II error (p-value is less than alpha)
+    if (mwu_result2$p.value < alpha){
+        type_ii_error_count_mwu <- type_ii_error_count_mwu + 1
     }
     
     #########################
@@ -657,7 +704,7 @@ type_ii_error_analysis <- function(rho, n_simulations = 100, alpha = 0.05) {
     kruskal_result <- kruskal.test(Degeneration ~ Dosage, data = df)
     
     # Check if it's a Type II error (p-value is greater than alpha)
-    if (kruskal_result$p.value >= alpha) {
+    if (kruskal_result$p.value < alpha) {
       type_ii_error_count_kruskal <- type_ii_error_count_kruskal + 1
     }
     
@@ -665,19 +712,42 @@ type_ii_error_analysis <- function(rho, n_simulations = 100, alpha = 0.05) {
     ## Jonckheere-Terpstra test ##
     jonck_result <- jonckheereTest(data[, 1], data[, 2])
     
-    if (jonck_result$p.value >= alpha) {
+    if (jonck_result$p.value < alpha) {
       type_ii_error_count_jonck <- type_ii_error_count_jonck + 1
     }
+    
+      ######################
+      ## Pairwise t-tests ##
+      pairwise_tukey_result <- pairwise.t.test(df$Degeneration, df$Dosage, p.adj = "none")
+      
+      if (any(na.omit(pairwise_tukey_result$p.value) < alpha)) {
+        type_ii_error_count_tukey <- type_ii_error_count_tukey + 1
+      }
+      
+      ####################
+      ## ANOVA test ##
+      anova_result <- aov(Degeneration ~ Dosage, data = df)
+      
+      if (summary(anova_result)[[1]][["Pr(>F)"]][[1]]< alpha) {
+        type_ii_error_count_anova <- type_ii_error_count_anova + 1
+      }
   }
+  
   
   # Calculate power (1 - Type II error rate)
   type_ii_rate_mwu<-type_ii_error_count_mwu / n_simulations
   type_ii_rate_kruskal<-type_ii_error_count_kruskal / n_simulations
   type_ii_rate_jonck<-type_ii_error_count_jonck / n_simulations
+  type_ii_rate_tukey<-type_ii_error_count_tukey / n_simulations
+  type_ii_rate_anova<-type_ii_error_count_anova / n_simulations
+
 
   power_mwu <- 1 - (type_ii_error_count_mwu / n_simulations)
   power_kruskal <- 1 - (type_ii_error_count_kruskal / n_simulations)
   power_jonck <- 1 - (type_ii_error_count_jonck / n_simulations)
+  power_tukey <- 1 - (type_ii_error_count_tukey / n_simulations)
+  power_anova <- 1 - (type_ii_error_count_anova / n_simulations)
+
   
   # Return results
   results <- data.frame(
@@ -685,9 +755,13 @@ type_ii_error_analysis <- function(rho, n_simulations = 100, alpha = 0.05) {
     type_ii_rate_mwu=type_ii_rate_mwu,
     type_ii_rate_kruskal=type_ii_rate_kruskal,
     type_ii_rate_jonck=type_ii_rate_jonck,
+    type_ii_rate__tukey=power_tukey,
+    type_ii_rate__anova=power_anova,
     power_mwu = power_mwu,
     power_kruskal = power_kruskal,
-    power_jonck = power_jonck
+    power_jonck = power_jonck,
+    power_tukey=power_tukey,
+    power_anova=power_anova
   )
   
   return(results)
@@ -695,7 +769,7 @@ type_ii_error_analysis <- function(rho, n_simulations = 100, alpha = 0.05) {
 
 # Define the sequence of correlations
 correlations <- seq(-0.7, 0.7, by = 0.01)
-
+results_list<-c()
 # Loop through the correlations
 for (rho in correlations) {
   # Call your type II error analysis function here and store the results
@@ -710,17 +784,17 @@ results_df <- do.call(rbind, results_list)
 
 # Print or further analyze the results_df
 print(results_df)
-#write.csv(results_df, "type_ii_error.csv")
+#write.csv(results_df, "type_ii_error_final_thesis.csv")
 ```
 
 ## Statistical Test Visualizations
 
 ```{r}
 type_ii_errors <- results_df %>% 
-  select("rho","type_ii_rate_mwu","type_ii_rate_kruskal", "type_ii_rate_jonck") %>% 
+  dplyr::select("rho","type_ii_rate_mwu","type_ii_rate_kruskal", "type_ii_rate_jonck",  "type_ii_rate_tukey", "type_ii_rate_anova") %>% 
   pivot_longer(-rho, names_to = "variable", values_to = "value")
 
-ggplot(type_ii_errors, aes(rho, value, colour = variable)) + geom_line()+
+ggplot(type_ii_errors, aes(rho, value, colour = variable)) + geom_line() +
   labs(
     x = "Rho",
     y = "Type II Error",
@@ -728,8 +802,14 @@ ggplot(type_ii_errors, aes(rho, value, colour = variable)) + geom_line()+
 #ggsave("type_ii_errors2.jpeg", width = 4, height = 4)
 
 type_ii_errors_power <- results_df %>% 
-  select("rho","power_mwu","power_kruskal", "power_jonck") %>% 
+  dplyr::select("rho","power_mwu","power_kruskal", "power_jonck","power_tukey","power_anova") %>% 
   pivot_longer(-rho, names_to = "variable", values_to = "value")
+
+value_mapping <- c("power_mwu" = "Mann-Whitney", "power_kruskal" = "Kruskal-Wallis", "power_jonck" = "Jonckheere", "power_tukey"="Pairwise ttest", "power_anova"="ANOVA")
+
+# Use mutate and recode
+type_ii_errors_power <- type_ii_errors_power %>%
+  mutate(variable = recode(variable, !!!value_mapping))
 
 ggplot(type_ii_errors_power, aes(rho, value, colour = variable)) + geom_line()+
   labs(
