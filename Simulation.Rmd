@@ -902,3 +902,66 @@ ggplot(type_ii_errors_power, aes(rho, value, colour = variable)) + geom_line()+
     color = "Test")
 #ggsave("type_ii_errors_power2.jpeg")
 ```
+
+
+## Bayesian Simulations (Presman & Herring, 2023)
+
+```{r}
+n_simulations <- 100  # Number of simulations
+alpha <- 0.05 # Significance level for Type I error
+type_i_error_count_bayesian <- 0
+pi_complement1<-c()
+pi_complement2<-c()
+
+# Perform statistical test for 1000 simulations
+for (i in 1:n_simulations) {
+  print(cat("Simulation",i))
+  data <- generate_data_set(rho = 0)
+  df <- as.data.frame(data) %>%rename("Treatment" = "V1", "NeuronScore" = "V2")
+  df$NeuronScore<-as.integer(df$NeuronScore)
+    y <- df$NeuronScore + 1
+    X <- matrix(0, nrow = dim(df)[1], ncol = 2)
+    for (i in 1:dim(df)[1]) {
+      if (df$Treatment[i] == 0.03) {
+        X[i, 1] <- 1
+      }
+      if (df$Treatment[i] == 0.5) {
+        X[i, 1] <- 1
+        X[i, 2] <- 1
+      }
+    }
+    
+    # Initialize parameters
+    N <- length(y)
+    K <- length(unique(y))
+    x1 <- X[, 1]
+    x2 <- X[, 2]
+    mu0 <- 0
+    lambda0 <- 1
+    mu_vec <- c(0, 0)
+    lambda_vec <- c(1, 1)
+    
+    # running stan file
+    stan_data <- list(N = N, K = K, y = y, x1 = x1, x2 = x2,
+                  mu0 = mu0, lambda0 = lambda0, mu_vec = mu_vec,
+                  lambda_vec = lambda_vec)
+    mod <- stan("stan_simple_constraint2.stan", data = stan_data, chains=2,warmup = 200)
+    
+    summary_table <- summary(mod)
+    mean_pi1 <- summary_table$summary["pi1", "mean"]
+    mean_pi2 <- summary_table$summary["pi2", "mean"]
+    
+    pi_complement1<-append(pi_complement1,1-mean_pi1)
+    pi_complement2<-append(pi_complement2,1-mean_pi2)
+    
+    if (1-mean_pi1 < alpha_adjusted || 1-mean_pi2< alpha_adjusted) {
+    type_i_error_count_bayesian <- type_i_error_count_bayesian + 1
+    }
+}
+## Mann-Whitney
+type_i_error_rate_bayesian <- type_i_error_count_bayesian / n_simulations
+cat("\nType I error analysis")
+cat("Bayesian Test")
+cat("Number of Type I Errors:", type_i_error_count_bayesian, "\n")
+cat("Type I Error Rate:", type_i_error_count_bayesian, "\n")
+```
