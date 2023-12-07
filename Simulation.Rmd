@@ -1,4 +1,8 @@
-
+---
+editor_options: 
+  markdown: 
+    wrap: 72
+---
 
 ```{r libraries}
 library(tidyverse)
@@ -22,7 +26,7 @@ ggplot(Neurodegeneration_scores, aes(x = Treatment)) +
   labs(title = "Histogram of Treatment doses", x = "Score", y = "Count")
 ```
 
-## Multinomial 
+## Multinomial
 
 ```{r}
 set.seed(12345)
@@ -53,7 +57,6 @@ out_of_sample_acc <- mean(out_of_sample_preds == test$NeuronScore)
 print(paste0("Out-of-sample accuracy rate: ", round(out_of_sample_acc, 2)))
 ```
 
-
 ## ANOVA
 
 ```{r}
@@ -67,10 +70,10 @@ summary(anova_model)
 TukeyHSD(anova_model, conf.level=.95, which = 'Replicate')
 ```
 
-
 ## Multivariate Simulations
 
-Simulate the treatments and neuron scores independently of one another using the rmultinom function in R
+Simulate the treatments and neuron scores independently of one another
+using the rmultinom function in R
 
 ```{r}
 # use table() function to get the count of each value in the column
@@ -120,7 +123,8 @@ hist(mse, breaks = 5, col = "steelblue", xlab = "Mean Squared Error", ylab = "Fr
 
 ## Generating Bivaraite Ordinal Simulations
 
-Simulate the treatments and neuron scores dependently using the GenOrd function
+Simulate the treatments and neuron scores dependently using the GenOrd
+function
 
 ```{r}
 x<-Neurodegeneration_scores$Treatment
@@ -146,6 +150,8 @@ marginal <- list(cumulative1, cumulative2)
 set.seed(123)
 # generate 100 samples using the cumulative marginal distributions
 samples<-ordsample(100, marginal, Sigma = matrix(c(1, rho, rho, 1),2,2), Spearman=TRUE)
+
+cumulative2
 ```
 
 ## Visualization for Correlated Samples
@@ -508,39 +514,53 @@ saveRDS(results, "linear_model_anova_results.csv")
 # Statistical Assessments (9/18/2023)
 
 ### Mann-Whitney U Test
-- comparing damage scores for the lowest dose and the highest dose:
-Null Hypothesis ($H_0$): The distribution of damage scores for the lowest dose is equal to the distribution of damage scores for the highest dose.
 
-Alternative Hypothesis ($H_1$):
-The distribution of damage scores for the lowest dose is not equal to the distribution of damage scores for the highest dose.
+-   comparing damage scores for the lowest dose and the highest dose:
+    Null Hypothesis ($H_0$): The distribution of damage scores for the
+    lowest dose is equal to the distribution of damage scores for the
+    highest dose.
 
+Alternative Hypothesis ($H_1$): The distribution of damage scores for
+the lowest dose is not equal to the distribution of damage scores for
+the highest dose.
 
 ### Kruskal-Wallis Test:
-- comparing damage scores for all doses
-Null Hypothesis ($H_0$): There is no significant difference in the distribution of damage scores among the different doses.
 
-Alternative Hypothesis ($H_1$):
-There is a significant difference in the distribution of damage scores among the different doses.
+-   comparing damage scores for all doses Null Hypothesis ($H_0$): There
+    is no significant difference in the distribution of damage scores
+    among the different doses.
+
+Alternative Hypothesis ($H_1$): There is a significant difference in the
+distribution of damage scores among the different doses.
 
 ### Jonckheere-Terpstra Trend Test (testing for a trend in damage scores across doses):
 
-Null Hypothesis ($H_0$):
-There is no trend in the distribution of damage scores across the different doses.
+Null Hypothesis ($H_0$): There is no trend in the distribution of damage
+scores across the different doses.
 
-Alternative Hypothesis ($H_1$):
-There is a trend in the distribution of damage scores across the different doses.
+Alternative Hypothesis ($H_1$): There is a trend in the distribution of
+damage scores across the different doses.
 
-- Explain how the choice of correlation (i.e., zero vs nonzero) is related to Type I/II errors
+-   Explain how the choice of correlation (i.e., zero vs nonzero) is
+    related to Type I/II errors
 
-Zero Correlation: If we assume zero correlation (no relationship) between variables when there is actually a nonzero correlation (a real relationship exists), we may commit a Type II error. In this case, we fail to detect a true effect.
-Nonzero Correlation: If we assume a nonzero correlation between variables when there is no actual correlation, we may commit a Type I error. In this case, we conclude there is an effect or relationship when there isn't one, which can lead to incorrect decisions.
+Zero Correlation: If we assume zero correlation (no relationship)
+between variables when there is actually a nonzero correlation (a real
+relationship exists), we may commit a Type II error. In this case, we
+fail to detect a true effect. Nonzero Correlation: If we assume a
+nonzero correlation between variables when there is no actual
+correlation, we may commit a Type I error. In this case, we conclude
+there is an effect or relationship when there isn't one, which can lead
+to incorrect decisions.
 
-- Explain at a high-level the difference between generate bivariate data from the linear model and from the ordinal model
+-   Explain at a high-level the difference between generate bivariate
+    data from the linear model and from the ordinal model
 
-Linear models assume a linear relationship between continuous variables, while ordinal models are used for ordered categorical data and consider the ordinal ranking of categories.
+Linear models assume a linear relationship between continuous variables,
+while ordinal models are used for ordered categorical data and consider
+the ordinal ranking of categories.
 
-## Type I Error Analysis 
-
+## Type I Error Analysis
 
 ```{r}
 #### Type I Error Analysis #####
@@ -568,7 +588,7 @@ generate_data_set <- function(rho) {
   converted_data
 }
 
-n_simulations <- 10000  # Number of simulations
+n_simulations <- 1000  # Number of simulations
 alpha <- 0.05 # Significance level for Type I error
 type_i_error_count_mwu <- 0
 type_i_error_count_kruskal <- 0
@@ -585,14 +605,17 @@ for (i in 1:n_simulations) {
   group_high <- data[data[, 1] == 0, ]
   group_middle <- data[data[, 1] == 0.03, ]
   group_low <- data[data[, 1] == 0.50, ]
+  group_high_df <- as.data.frame(group_high) %>% rename("Dosage" = "V1", "Degeneration" = "V2")
+  group_middle_df <- as.data.frame(group_middle) %>% rename("Dosage" = "V1", "Degeneration" = "V2")
+  group_low_df <- as.data.frame(group_low) %>% rename("Dosage" = "V1", "Degeneration" = "V2")
   
-  mwu_result1 <- wilcox.test(group_high[, 1], group_middle[, 2])
-  mwu_result2 <- wilcox.test(group_high[, 1], group_low[, 2])
-  mwu_result3 <- wilcox.test(group_low[, 1], group_middle[, 2])
+  mwu_result1 <- wilcox.test(group_high_df$Degeneration, group_middle_df$Degeneration)
+  mwu_result2 <- wilcox.test(group_high_df$Degeneration, group_low_df$Degeneration)
+  mwu_result3 <- wilcox.test(group_low_df$Degeneration, group_middle_df$Degeneration)
   alpha_adjusted <- alpha / 3
   
   # Check if it's a Type I error (p-value is less than alpha)
-  if (mwu_result1$p.value < alpha_adjusted || mwu_result3$p.value < alpha_adjusted || mwu_result3$p.value < alpha_adjusted) {
+  if (mwu_result1$p.value < alpha_adjusted || mwu_result2$p.value < alpha_adjusted ||  mwu_result3$p.value < alpha_adjusted) {
     type_i_error_count_mwu <- type_i_error_count_mwu + 1
   }
   
@@ -618,11 +641,15 @@ for (i in 1:n_simulations) {
   
   ######################
   ## Pairwise t-tests ##
-  pairwise_tukey_result <- pairwise.t.test(df$Degeneration, df$Dosage, p.adj = "none")
+
+  pairwise_tukey_result1 <- t.test(group_high_df$Degeneration, group_middle_df$Degeneration,p.adj = "none")
+  pairwise_tukey_result2 <- t.test(group_high_df$Degeneration, group_low_df$Degeneration,p.adj = "none")
+  pairwise_tukey_result3 <- t.test(group_low_df$Degeneration, group_middle_df$Degeneration,p.adj = "none")
   
-  if (any(na.omit(pairwise_tukey_result$p.value) < alpha)) {
+  if (any(na.omit(pairwise_tukey_result1$p.value) < alpha_adjusted)||any(na.omit(pairwise_tukey_result2$p.value) < alpha_adjusted)||any(na.omit(pairwise_tukey_result3$p.value) < alpha_adjusted)) {
     type_i_error_count_tukey <- type_i_error_count_tukey + 1
   }
+  
   
   ####################
   ## ANOVA test ##
@@ -668,69 +695,82 @@ cat("Type I Error Rate:", type_i_error_rate_anova, "\n")
 
 ## Type II Error Analysis
 
-```{r}
+```{r warning=F}
 # Function to perform Type II error analysis for a specific correlation (rho)
-type_ii_error_analysis <- function(rho, n_simulations = 100, alpha = 0.05) {
+type_ii_error_analysis <- function(rho, n_simulations = 1000, alpha = 0.05) {
   type_ii_error_count_mwu <- 0
   type_ii_error_count_kruskal <- 0
   type_ii_error_count_jonck <- 0
   type_ii_error_count_tukey<-0
   type_ii_error_count_anova<-0
-
+  
   # Perform statistical tests for the specified number of simulations
   for (i in 1:n_simulations) {
     data <- generate_data_set(rho)
     alpha <-0.05
+    df <- as.data.frame(data) %>%
+    rename("Dosage" = "V1", "Degeneration" = "V2")
+        
     #######################
     ## Mann-Whitney TEST ##
-    group_high <- data[data[, 1] == 0, ]
-    group_middle <- data[data[, 1] == 0.03, ]
-    group_low <- data[data[, 1] == 0.50, ]
-    mwu_result1 <- wilcox.test(group_high[,1], group_middle[,2])
-    mwu_result2 <- wilcox.test(group_high[,2], group_low[,2])
-    mwu_result3 <- wilcox.test(group_low[,1], group_middle[,2])
-    alpha_adjusted <- alpha / 3
-    # Check if it's a Type II error (p-value is less than alpha)
-    if (mwu_result2$p.value < alpha){
-        type_ii_error_count_mwu <- type_ii_error_count_mwu + 1
-    }
-    
-    #########################
-    ## Kruskal Wallis TEST ##
-    df <- as.data.frame(data) %>%
-      rename("Dosage" = "V1", "Degeneration" = "V2")
-    
-    # Run Kruskal-Wallis test
+  control <- data[data[, 1] == 0, ]
+  low <- data[data[, 1] == 0.03, ]
+  high <- data[data[, 1] == 0.50, ]
+  control_df <- as.data.frame(control) %>% rename("Dosage" = "V1", "Degeneration" = "V2")
+  low_df <- as.data.frame(low) %>% rename("Dosage" = "V1", "Degeneration" = "V2")
+  high_df <- as.data.frame(high) %>% rename("Dosage" = "V1", "Degeneration" = "V2")
+  
+  # mwu_result1 <- wilcox.test(group_high_df$Degeneration, group_middle_df$Degeneration)
+  mwu_result1 <- wilcox.test(high_df$Degeneration, control_df$Degeneration)
+  mwu_result2 <- wilcox.test(low_df$Degeneration,control_df$Degeneration)
+  alpha_adjusted <- alpha / 2
+  # 
+  # # Check if it's a Type II error (p-value is more than alpha)
+  if (mwu_result1$p.value >= alpha_adjusted || mwu_result2$p.value >= alpha_adjusted) {
+    type_ii_error_count_mwu <- type_ii_error_count_mwu + 1
+  }
+
+  #   #########################
+  #   ## Kruskal Wallis TEST ##
+
+  #   # Run Kruskal-Wallis test
     kruskal_result <- kruskal.test(Degeneration ~ Dosage, data = df)
-    
-    # Check if it's a Type II error (p-value is greater than alpha)
-    if (kruskal_result$p.value < alpha) {
+  #
+  #   # Check if it's a Type II error (p-value is greater than alpha)
+    if (kruskal_result$p.value >= alpha) {
       type_ii_error_count_kruskal <- type_ii_error_count_kruskal + 1
     }
-    
-    ##############################
-    ## Jonckheere-Terpstra test ##
-    jonck_result <- jonckheereTest(data[, 1], data[, 2])
-    
-    if (jonck_result$p.value < alpha) {
+  #
+  #   ##############################
+  #   ## Jonckheere-Terpstra test ##
+    jonck_result <- jonckheereTest(df$Dosage, df$Degeneration)
+
+    if (jonck_result$p.value >= alpha) {
       type_ii_error_count_jonck <- type_ii_error_count_jonck + 1
     }
-    
+  #
       ######################
       ## Pairwise t-tests ##
-      pairwise_tukey_result <- pairwise.t.test(df$Degeneration, df$Dosage, p.adj = "none")
-      
-      if (any(na.omit(pairwise_tukey_result$p.value) < alpha)) {
+      # pairwise_tukey_result1 <- t.test(group_high_df$Degeneration, group_middle_df$Degeneration,p.adj = "none")
+      pairwise_tukey_result1 <- t.test(high_df$Degeneration, control_df$Degeneration,p.adj = "none")
+      pairwise_tukey_result2 <- t.test(low_df$Degeneration,control_df$Degeneration,p.adj = "none")
+
+      if (na.omit(pairwise_tukey_result1$p.value) >= alpha_adjusted||na.omit(pairwise_tukey_result2$p.value) >= alpha_adjusted) {
         type_ii_error_count_tukey <- type_ii_error_count_tukey + 1
       }
       
       ####################
       ## ANOVA test ##
       anova_result <- aov(Degeneration ~ Dosage, data = df)
+      anova_p<-summary(anova_result)[[1]][["Pr(>F)"]][[1]]
       
-      if (summary(anova_result)[[1]][["Pr(>F)"]][[1]]< alpha) {
+      if (anova_p>= alpha) {
         type_ii_error_count_anova <- type_ii_error_count_anova + 1
       }
+      
+      # cat("t-test: ", na.omit(pairwise_tukey_result1$p.value)," ",na.omit(pairwise_tukey_result2$p.value),"ANOVA: ",anova_p)
+      # print("")
+    
   }
   
   
@@ -755,8 +795,8 @@ type_ii_error_analysis <- function(rho, n_simulations = 100, alpha = 0.05) {
     type_ii_rate_mwu=type_ii_rate_mwu,
     type_ii_rate_kruskal=type_ii_rate_kruskal,
     type_ii_rate_jonck=type_ii_rate_jonck,
-    type_ii_rate__tukey=power_tukey,
-    type_ii_rate__anova=power_anova,
+    type_ii_rate_tukey=type_ii_rate_tukey,
+    type_ii_rate_anova=type_ii_rate_anova,
     power_mwu = power_mwu,
     power_kruskal = power_kruskal,
     power_jonck = power_jonck,
@@ -768,7 +808,8 @@ type_ii_error_analysis <- function(rho, n_simulations = 100, alpha = 0.05) {
 }
 
 # Define the sequence of correlations
-correlations <- seq(-0.7, 0.7, by = 0.01)
+# correlations <- seq(-0.7, 0.7, by = 0.01)
+correlations <- c(-0.3,-0.2,-0.1, 0.1,0.2,0.3)
 results_list<-c()
 # Loop through the correlations
 for (rho in correlations) {
@@ -784,7 +825,50 @@ results_df <- do.call(rbind, results_list)
 
 # Print or further analyze the results_df
 print(results_df)
-#write.csv(results_df, "type_ii_error_final_thesis.csv")
+#write.csv(results_df, "type_ii_error_thesis_table.csv")
+#write.csv(results_df, "type_ii_error_thesis_tablepointone.csv")
+```
+
+```{r}
+### TEST CODE
+count1 <- 0
+count2 <- 0
+count_either <- 0
+count_both<-0
+
+for (i in 1:1000) {
+  data <- generate_data_set(rho=0.5)
+
+  control <- data[data[, 1] == 0, ]
+  low <- data[data[, 1] == 0.03, ]
+  high <- data[data[, 1] == 0.50, ]
+  control_df <- as.data.frame(control) %>% rename("Dosage" = "V1", "Degeneration" = "V2")
+  low_df <- as.data.frame(low) %>% rename("Dosage" = "V1", "Degeneration" = "V2")
+  high_df <- as.data.frame(high) %>% rename("Dosage" = "V1", "Degeneration" = "V2")
+  
+      ######################
+      ## Pairwise t-tests ##
+      # pairwise_tukey_result1 <- t.test(group_high_df$Degeneration, group_middle_df$Degeneration,p.adj = "none")
+      pairwise_tukey_result1 <- t.test(high_df$Degeneration, control_df$Degeneration,p.adj = "none")
+      pairwise_tukey_result2 <- t.test(high_df$Degeneration, control_df$Degeneration,p.adj = "none")
+
+      if (na.omit(pairwise_tukey_result1$p.value) >= alpha_adjusted) {
+        count1 <- count1 + 1
+      }
+      if (na.omit(pairwise_tukey_result2$p.value) >= alpha_adjusted) {
+        count2 <- count2 + 1
+      }
+      if (na.omit(pairwise_tukey_result1$p.value) >= alpha_adjusted||na.omit(pairwise_tukey_result2$p.value) >= alpha_adjusted) {
+        count_either <- count_either + 1
+      }
+      if (na.omit(pairwise_tukey_result1$p.value) >= alpha_adjusted&&na.omit(pairwise_tukey_result2$p.value) >= alpha_adjusted) {
+        count_both <- count_both + 1
+      }
+}
+cat("Number of errors in first comparison:", count1, "\n")
+cat("Number of errors in second comparison:", count2, "\n")
+cat("Number of errors in either comparison:", count_either, "\n")
+cat("Number of errors in both comparisons:", count_both, "\n")
 ```
 
 ## Statistical Test Visualizations
